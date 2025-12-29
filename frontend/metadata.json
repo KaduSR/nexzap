@@ -1,0 +1,8 @@
+{
+  "name": "NexZap",
+  "description": "O Sistema Operacional do Provedor de Internet. Gestão de tickets, cobrança e automação via WhatsApp.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
