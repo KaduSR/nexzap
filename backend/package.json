@@ -28,7 +28,7 @@
     "socket.io": "^4.7.2",
     "sqlite3": "^5.1.7",
     "stripe": "^14.14.0",
-    "whatsapp-web.js": "^1.23.0"
+    "whatsapp-web.js": "^1.34.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
