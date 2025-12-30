@@ -36,7 +36,7 @@ import Webphone from "./components/Webphone";
 import { io } from "socket.io-client";
 
 // URL do Backend (ajuste conforme ambiente)
-const socketUrl = "http://localhost:8080";
+const socketUrl = "http://localhost:4000";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
