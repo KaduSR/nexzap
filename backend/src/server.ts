@@ -1,31 +1,19 @@
-import express from "express";
-import cors from "cors";
+import app from "./app";
 import { testConnection } from "./database/index";
 
-const app = express();
 const PORT = process.env.PORT || 4000;
-
-app.use(cors());
-app.use(express.json());
 
 async function startServer() {
   try {
-    // Inicialize o banco de dados primeiro
     await testConnection();
+    console.log("✅ Banco de dados conectado!");
 
-    console.log("Banco de dados inicializado com sucesso!");
-
-    // Rota de teste
-    app.get("/", (req, res) => {
-      res.json({ message: "API NexZap está funcionando!" });
-    });
-
-    // Inicie o servidor
     app.listen(PORT, () => {
-      console.log(`Servidor rodando na porta ${PORT}`);
+      console.log(`🚀 Servidor rodando na porta ${PORT}`);
+      console.log(`🌐 Acesse em: http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error("Falha ao inicializar o servidor:", error);
+    console.error("❌ Erro ao conectar ao banco de dados:", error);
     process.exit(1);
   }
 }
