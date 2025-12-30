@@ -1,6 +1,6 @@
 import { Response } from "express";
-import Queue from "../database/models/Queue";
-import User from "../database/models/User";
+import Queue from "../database/models/Queue.model";
+import User from "../database/models/User.model";
 
 export const index = async (req: any, res: Response): Promise<Response> => {
   const queues = await (Queue as any).findAll({

@@ -1,4 +1,4 @@
-import Campaign from "../../database/models/Campaign";
+import Campaign from "../../database/models/Campaign.model";
 
 const ListCampaignsService = async (): Promise<Campaign[]> => {
   const campaigns = await (Campaign as any).findAll({

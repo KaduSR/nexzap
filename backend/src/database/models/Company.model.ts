@@ -54,7 +54,7 @@ class Company extends Model<Company> {
   status!: boolean; // Active/Inactive
 
   @Column(DataType.DATEONLY)
-  dueDate!: string; // Payment Due Date
+  dueDate!: Date; // Payment Due Date
 
   @Column(DataType.STRING)
   stripeCustomerId!: string;

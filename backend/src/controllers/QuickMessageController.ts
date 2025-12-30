@@ -1,18 +1,17 @@
 import { Request, Response } from "express";
-import * as Yup from "yup"; // Assuming yup is installed or we use basic validation
+import AppError from "../errors/AppError";
 import CreateQuickMessageService from "../services/QuickMessageService/CreateQuickMessageService";
-import ListQuickMessageService from "../services/QuickMessageService/ListQuickMessageService";
 import DeleteQuickMessageService from "../services/QuickMessageService/DeleteQuickMessageService";
+import ListQuickMessageService from "../services/QuickMessageService/ListQuickMessageService";
 import ShowQuickMessageService from "../services/QuickMessageService/ShowQuickMessageService";
 import UpdateQuickMessageService from "../services/QuickMessageService/UpdateQuickMessageService";
-import AppError from "../errors/AppError";
 
 export const index = async (req: any, res: Response): Promise<Response> => {
   const { companyId, id: userId } = req.user;
 
   const records = await ListQuickMessageService({
     companyId,
-    userId: Number(userId)
+    userId: Number(userId),
   });
 
   return res.json(records);
@@ -24,7 +23,7 @@ export const store = async (req: any, res: Response): Promise<Response> => {
   const file = req.file;
 
   if (!data.shortcode || !data.message) {
-      throw new AppError("Shortcode and Message are required");
+    throw new AppError("Shortcode and Message are required");
   }
 
   const record = await CreateQuickMessageService({
@@ -32,7 +31,7 @@ export const store = async (req: any, res: Response): Promise<Response> => {
     companyId,
     userId: Number(userId),
     mediaPath: file ? file.filename : null,
-    mediaName: file ? file.originalname : null
+    mediaName: file ? file.originalname : null,
   });
 
   return res.status(200).json(record);
@@ -55,13 +54,16 @@ export const update = async (req: any, res: Response): Promise<Response> => {
     id,
     ...data,
     mediaPath: file ? file.filename : undefined,
-    mediaName: file ? file.originalname : undefined
+    mediaName: file ? file.originalname : undefined,
   });
 
   return res.status(200).json(record);
 };
 
-export const remove = async (req: Request, res: Response): Promise<Response> => {
+export const remove = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { id } = req.params;
 
   await DeleteQuickMessageService(id);

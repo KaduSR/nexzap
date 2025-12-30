@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 import Stripe from "stripe";
 // IMPORTANTE: Usamos 'as InvoiceModel' para não conflitar com o tipo do Stripe
-import { Company, Invoice as InvoiceModel } from "../database/models";
+import Company from "../database/models/Company.model";
 import { logger } from "../utils/logger";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {

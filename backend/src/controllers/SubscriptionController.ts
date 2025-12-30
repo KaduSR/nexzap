@@ -1,11 +1,11 @@
 import { Response } from "express";
 import Stripe from "stripe";
-import Company from "../database/models/Company";
-import Plan from "../database/models/Plan";
+import Company from "../database/models/Company.model";
+import Plan from "../database/models/Plan.model";
 import AppError from "../errors/AppError";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
-  apiVersion: "2025-02-24.acacia",
+  apiVersion: "2025-02-24.acacia" as any,
 });
 
 export const createCheckoutSession = async (

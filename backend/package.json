@@ -46,7 +46,8 @@
     "sequelize-typescript": "^2.1.6",
     "socket.io": "^4.8.3",
     "sqlite3": "^5.1.7",
-    "stripe": "^20.1.0"
+    "stripe": "^20.1.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

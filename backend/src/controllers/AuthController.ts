@@ -1,8 +1,8 @@
 import { compare, hash } from "bcryptjs";
 import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
-import { Company } from "../database/models/Company.model";
-import { User } from "../database/models/User.model";
+import Company from "../database/models/Company.model";
+import User from "../database/models/User.model";
 import AppError from "../errors/AppError";
 
 // Configuração do JWT (Idealmente via .env)

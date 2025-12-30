@@ -1,5 +1,5 @@
 import { Response } from "express";
-import Invoice from "../database/models/Invoice";
+import Invoice from "../database/models/Invoice.model";
 import { getIO } from "../libs/socket";
 import * as IxcService from "../services/IxcService";
 
