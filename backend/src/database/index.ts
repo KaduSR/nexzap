@@ -1,33 +1,29 @@
-import { Sequelize } from 'sequelize-typescript';
-import { Company } from './models/Company.model';
-import { User } from './models/User.model';
+import path from "path";
+import { Sequelize } from "sequelize-typescript";
+
+// Importar TODOS os modelos
+import { Company } from "./models/Company.model";
+import { Contact } from "./models/Contact.model";
+import { Invoice } from "./models/Invoice.model";
+import { Plan } from "./models/Plan.model";
+import { Queue } from "./models/Queue.model";
+import { Setting } from "./models/Setting.model";
+import { Ticket } from "./models/Ticket.model";
+import { User } from "./models/User.model";
+
+// Use process.env ou padrão local
+const dbPath = path.resolve(process.cwd(), "database.sqlite");
 
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: './src/database/database.sqlite',
-  models: [Company, User],
-  logging: console.log, // Ative logs para debug
+  dialect: "sqlite",
+  storage: dbPath,
+  // REGISTRE AQUI O ARRAY COMPLETO:
+  models: [User, Company, Plan, Setting, Contact, Ticket, Queue, Invoice],
+  logging: false,
   define: {
     timestamps: true,
     underscored: false,
   },
 });
 
-// Teste a conexão e sincronização
-async function testConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log('Conexão com o banco estabelecida com sucesso.');
-    
-    // Sincronize os modelos com o banco
-    await sequelize.sync({ force: false });
-    console.log('Modelos sincronizados com o banco.');
-    
-    return sequelize;
-  } catch (error) {
-    console.error('Erro na conexão com o banco:', error);
-    throw error;
-  }
-}
-
-export { sequelize, testConnection };
+export { sequelize };
