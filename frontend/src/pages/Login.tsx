@@ -89,7 +89,11 @@ const Login: React.FC = () => {
 
           <div className="flex justify-between items-end border-t border-white/10 pt-8">
             <div className="text-xs font-medium text-slate-400">
-              © 2025 NexZap Tecnologia.
+              © 2025{" "}
+              <a href="https://kadudev.com.br" className="text-blue-500">
+                Kadu Dev Tecnologia
+              </a>
+              .
               <br />
               Feito para Provedores.
             </div>
