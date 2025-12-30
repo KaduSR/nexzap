@@ -177,7 +177,6 @@ routes.post("/companies", isAuth, SuperAdminController.store);
 routes.get("/companies/plans", isAuth, SuperAdminController.listPlans);
 routes.put("/companies/:id", isAuth, SuperAdminController.updateCompany);
 routes.get("/companies/me", isAuth, SuperAdminController.currentCompany);
-
 // Rotas PLANS (SaaS Management)
 routes.get("/plans", isAuth, PlanController.index);
 routes.post("/plans", isAuth, PlanController.store);
