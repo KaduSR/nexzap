@@ -1,5 +1,5 @@
 import app from "./app";
-import { runSeeds } from "./database/seeds/runSeeds";
+import { runSeeds } from "./database/seeders/runSeeds";
 import { sequelize } from "./database/index";
 import { testConnection } from "./database/index";
 

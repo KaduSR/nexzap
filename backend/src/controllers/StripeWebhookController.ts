@@ -94,7 +94,7 @@ async function handleSubscriptionCreated(session: Stripe.Checkout.Session) {
 async function handleInvoicePaid(stripeInvoice: Stripe.Invoice) {
   const customerId = stripeInvoice.customer as string;
   // O Stripe chama de 'subscription'. O TypeScript agora aceita porque a variável é stripeInvoice
-  const subscriptionId = stripeInvoice.subscription as string;
+  const subscriptionId = (stripeInvoice as any).subscription as string;
 
   const company = await Company.findOne({
     where: { stripeCustomerId: customerId },

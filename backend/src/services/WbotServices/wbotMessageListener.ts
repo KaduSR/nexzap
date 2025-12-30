@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   downloadMediaMessage,
   extractMessageContent,
@@ -74,7 +75,7 @@ const verifyMediaMessage = async (
   if (!mediaTypes.includes(type)) return;
 
   try {
-    const buffer = await downloadMediaMessage(msg, "buffer", {});
+    const buffer = await downloadMediaMessage(msg as any, "buffer", {});
 
     const fileName = `${new Date().getTime()}.${
       type === "audioMessage" ? "mp3" : "jpg"

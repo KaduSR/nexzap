@@ -14,7 +14,7 @@ import {
 import Contact from "./Contact.model";
 
 @Table({ tableName: "Invoices" })
-class Invoice extends Model<Invoice> {
+export class Invoice extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column
