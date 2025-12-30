@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import Groq from "groq-sdk";
 import OpenAI from "openai";
-import Setting from "../../database/models/Setting";
+import Setting from "../../database/models/Setting.model";
 import { logger } from "../../utils/logger";
 
 interface Request {

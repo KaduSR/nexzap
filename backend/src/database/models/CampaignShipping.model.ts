@@ -1,17 +1,17 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
-  PrimaryKey,
-  AutoIncrement,
   ForeignKey,
-  BelongsTo,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import { Contact } from "./Contact.model";
 import Campaign from "./Campaign.model";
+import Contact from "./Contact.model";
 
 @Table({ tableName: "CampaignShipping" })
 class CampaignShipping extends Model<CampaignShipping> {

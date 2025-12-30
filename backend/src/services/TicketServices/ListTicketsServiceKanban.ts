@@ -1,7 +1,7 @@
-import Contact from "../../database/models/Contact";
-import Tag from "../../database/models/Tag";
-import Ticket from "../../database/models/Ticket";
-import User from "../../database/models/User";
+import Contact from "../../database/models/Contact.model";
+import Tag from "../../database/models/Tag.model";
+import Ticket from "../../database/models/Ticket.model";
+import User from "../../database/models/User.model";
 
 interface Request {
   date?: string;

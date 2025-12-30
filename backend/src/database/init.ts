@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
-import { Company } from "./models/Company.model";
-import { User } from "./models/User.model";
+import Company from "./models/Company.model";
+import User from "./models/User.model";
 
 export const sequelize = new Sequelize({
   dialect: "sqlite",

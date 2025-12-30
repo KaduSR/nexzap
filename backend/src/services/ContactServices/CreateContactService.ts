@@ -1,4 +1,4 @@
-import Contact from "../../database/models/Contact";
+import Contact from "../../database/models/Contact.model";
 
 interface Request {
   name: string;

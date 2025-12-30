@@ -11,7 +11,7 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import { Tag } from "./Tag.model";
+import Tag from "./Tag.model";
 
 @Table({
   tableName: "Incidents",

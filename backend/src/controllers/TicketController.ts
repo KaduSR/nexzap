@@ -1,4 +1,4 @@
-import Ticket from "../database/models/Ticket";
+import Ticket from "../database/models/Ticket.model";
 import CreateMessageService from "../services/MessageServices/CreateMessageService";
 import CreateTicketService from "../services/TicketServices/CreateTicketService";
 import ListTicketsServiceKanban from "../services/TicketServices/ListTicketsServiceKanban";

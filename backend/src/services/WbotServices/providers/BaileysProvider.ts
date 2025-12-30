@@ -7,7 +7,7 @@ import {
 } from "@whiskeysockets/baileys";
 import NodeCache from "node-cache";
 import pino from "pino";
-import Whatsapp from "../../../database/models/Whatsapp";
+import Whatsapp from "../../../database/models/Whatsapp.model";
 import { useMultiFileAuthStateDb } from "../../../helpers/useMultiFileAuthStateDb";
 import { getIO } from "../../../libs/socket";
 import { initWbot, removeWbot } from "../../../libs/wbot";

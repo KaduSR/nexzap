@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Whatsapp from "../database/models/Whatsapp";
+import Whatsapp from "../database/models/Whatsapp.model";
 import AppError from "../errors/AppError";
 import { getIO } from "../libs/socket";
 import { removeWbot } from "../libs/wbot";

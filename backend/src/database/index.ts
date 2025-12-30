@@ -3,15 +3,15 @@ import path from "path";
 import { Sequelize } from "sequelize-typescript";
 
 // 1. Importe TODOS os modelos que sua aplicação e o Seed usam
-import { Company } from "./models/Company.model";
-import { Contact } from "./models/Contact.model"; // <--- Faltava este
-import { Invoice } from "./models/Invoice.model"; // <--- Faltava este
-import { Plan } from "./models/Plan.model"; // <--- Faltava este
-import { Queue } from "./models/Queue.model"; // <--- Faltava este
-import { Setting } from "./models/Setting.model"; // <--- Faltava este
-import { Ticket } from "./models/Ticket.model"; // <--- Faltava este
-import { User } from "./models/User.model";
-import { Whatsapp } from "./models/Whatsapp.model";
+import Company from "./models/Company.model";
+import Contact from "./models/Contact.model"; // <--- Faltava este
+import Invoice from "./models/Invoice.model"; // <--- Faltava este
+import Plan from "./models/Plan.model"; // <--- Faltava este
+import Queue from "./models/Queue.model"; // <--- Faltava este
+import Setting from "./models/Setting.model"; // <--- Faltava este
+import Ticket from "./models/Ticket.model"; // <--- Faltava este
+import User from "./models/User.model";
+import Whatsapp from "./models/Whatsapp.model";
 
 const dbPath = path.resolve(process.cwd(), "database.sqlite");
 

@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { User } from "../database/models/User.model";
+import User from "../database/models/User.model";
 
 const isSuper = async (
   req: any,

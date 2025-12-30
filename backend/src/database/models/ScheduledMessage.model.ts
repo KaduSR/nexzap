@@ -12,7 +12,7 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import Contact from "./Contact.model";
-import { Ticket } from "./Ticket.model";
+import Ticket from "./Ticket.model";
 
 @Table({
   tableName: "ScheduledMessages",

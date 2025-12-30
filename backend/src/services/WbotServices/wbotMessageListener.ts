@@ -8,11 +8,11 @@ import { writeFile } from "fs";
 import { join } from "path";
 import { promisify } from "util";
 
-import Contact from "../../database/models/Contact";
-import Message from "../../database/models/Message";
-import Ticket from "../../database/models/Ticket";
-import UserRating from "../../database/models/UserRating";
-import Whatsapp from "../../database/models/Whatsapp";
+import Contact from "../../database/models/Contact.model";
+import Message from "../../database/models/Message.model";
+import Ticket from "../../database/models/Ticket.model";
+import UserRating from "../../database/models/UserRating.model";
+import Whatsapp from "../../database/models/Whatsapp.model";
 import { getBodyMessage } from "../../helpers/GetWbotMessage";
 import isOutsideBusinessHours from "../../helpers/IsOutsideBusinessHours";
 import { logger } from "../../utils/logger";

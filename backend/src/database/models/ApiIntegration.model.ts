@@ -10,7 +10,7 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import { Company } from "./Company.model";
+import Company from "./Company.model";
 
 @Table({
   tableName: "ApiIntegrations",

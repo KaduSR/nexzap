@@ -1,5 +1,5 @@
-import Campaign from "../../database/models/Campaign";
-import CampaignShipping from "../../database/models/CampaignShipping";
+import Campaign from "../../database/models/Campaign.model";
+import CampaignShipping from "../../database/models/CampaignShipping.model";
 import { getWbot } from "../../libs/wbot";
 import { logger } from "../../utils/logger";
 import { sleepRandom } from "../../utils/sleepRandom";

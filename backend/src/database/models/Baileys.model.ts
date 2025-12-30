@@ -10,7 +10,7 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import { Whatsapp } from "./Whatsapp.model";
+import Whatsapp from "./Whatsapp.model";
 
 @Table({
   tableName: "Baileys",

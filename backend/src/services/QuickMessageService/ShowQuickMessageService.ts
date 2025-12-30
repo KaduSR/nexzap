@@ -1,4 +1,4 @@
-import QuickMessage from "../../database/models/QuickMessage";
+import QuickMessage from "../../database/models/QuickMessage.model";
 import AppError from "../../errors/AppError";
 
 const ShowQuickMessageService = async (

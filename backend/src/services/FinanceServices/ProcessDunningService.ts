@@ -1,8 +1,8 @@
 import { Op } from "sequelize";
-import Contact from "../../database/models/Contact";
-import DunningSettings from "../../database/models/DunningSettings";
-import Setting from "../../database/models/Setting";
-import Whatsapp from "../../database/models/Whatsapp";
+import Contact from "../../database/models/Contact.model";
+import DunningSettings from "../../database/models/DunningSettings.model";
+import Setting from "../../database/models/Setting.model";
+import Whatsapp from "../../database/models/Whatsapp.model";
 import { logger } from "../../utils/logger";
 import { sleepRandom } from "../../utils/sleepRandom";
 import IxcClient from "../IxcService/IxcClient";

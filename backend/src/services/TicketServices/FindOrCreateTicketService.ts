@@ -1,5 +1,5 @@
-import Contact from "../../database/models/Contact";
-import Ticket from "../../database/models/Ticket";
+import Contact from "../../database/models/Contact.model";
+import Ticket from "../../database/models/Ticket.model";
 
 const FindOrCreateTicketService = async (
   contact: Contact,

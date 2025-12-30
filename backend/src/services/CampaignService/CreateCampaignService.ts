@@ -1,4 +1,4 @@
-import Campaign from "../../database/models/Campaign";
+import Campaign from "../../database/models/Campaign.model";
 
 interface Request {
   name: string;

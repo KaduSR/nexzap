@@ -1,4 +1,4 @@
-import QuickMessage from "../../database/models/QuickMessage";
+import QuickMessage from "../../database/models/QuickMessage.model";
 import ShowQuickMessageService from "./ShowQuickMessageService";
 
 interface Request {

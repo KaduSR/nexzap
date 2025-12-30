@@ -1,5 +1,5 @@
-import Message from "../../database/models/Message";
-import Ticket from "../../database/models/Ticket";
+import Message from "../../database/models/Message.model";
+import Ticket from "../../database/models/Ticket.model";
 import AppError from "../../errors/AppError";
 import { getWbot } from "../../libs/wbot";
 

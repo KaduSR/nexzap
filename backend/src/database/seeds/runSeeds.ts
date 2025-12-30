@@ -1,11 +1,11 @@
-import Company from "../models/Company";
-import Contact from "../models/Contact";
-import Invoice from "../models/Invoice";
-import Plan from "../models/Plan";
-import Queue from "../models/Queue";
-import Setting from "../models/Setting";
-import Ticket from "../models/Ticket";
-import User from "../models/User";
+import Company from "../models/Company.model";
+import Contact from "../models/Contact.model";
+import Invoice from "../models/Invoice.model";
+import Plan from "../models/Plan.model";
+import Queue from "../models/Queue.model";
+import Setting from "../models/Setting.model";
+import Ticket from "../models/Ticket.model";
+import User from "../models/User.model";
 
 export const runSeeds = async () => {
   console.log("🌱 Starting Seed Process for NexZap...");

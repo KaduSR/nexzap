@@ -13,8 +13,8 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import Contact from "./Contact.model";
-import { Plan } from "./Plan.model";
-import { User } from "./User.model";
+import Plan from "./Plan.model";
+import User from "./User.model";
 
 @Table({
   tableName: "Companies",

@@ -11,7 +11,7 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import Company from "./Company.model";
-import { Queue } from "./Queue.model";
+import Queue from "./Queue.model";
 
 @Table({
   tableName: "Prompts",

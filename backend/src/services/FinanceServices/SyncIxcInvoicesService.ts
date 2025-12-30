@@ -1,6 +1,6 @@
-import Contact from "../../database/models/Contact";
-import Invoice from "../../database/models/Invoice";
-import Setting from "../../database/models/Setting";
+import Contact from "../../database/models/Contact.model";
+import Invoice from "../../database/models/Invoice.model";
+import Setting from "../../database/models/Setting.model";
 import { getIO } from "../../libs/socket";
 import { logger } from "../../utils/logger";
 import IxcClient from "../IxcService/IxcClient";

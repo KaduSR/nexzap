@@ -17,7 +17,7 @@ import Contact from "./Contact.model";
 import Tag from "./Tag.model";
 import TicketTag from "./TicketTag.model";
 import User from "./User.model";
-import { Whatsapp } from "./Whatsapp.model";
+import Whatsapp from "./Whatsapp.model";
 
 @Table({
   tableName: "Tickets",
