@@ -1,15 +1,24 @@
-
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "ES2017",
     "module": "commonjs",
-    "lib": ["es2020"],
+    "lib": ["ES2017"],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  }
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+
+    // ⭐ IMPORTANTE: Use estas configurações para decorators
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+
+    // ⭐ NÃO use esta linha (remova se existir):
+    // "useDefineForClassFields": false
+  },
+  "include": ["src/**/*", "migrations"],
+  "exclude": ["node_modules", "dist"]
 }

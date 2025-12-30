@@ -4,14 +4,18 @@ import Company from "../models/Company";
 import AppError from "../errors/AppError";
 import { compare, hash } from "bcryptjs";
 import { sign } from "jsonwebtoken";
+import { Sign } from "crypto";
 
 // Configuração do JWT (Idealmente via .env)
 const authConfig = {
   secret: process.env.JWT_SECRET || "default_secret_nexzap",
-  expiresIn: "7d",
+  expiresIn: "7d" as string,
 };
 
-export const register = async (req: Request, res: Response): Promise<Response> => {
+export const register = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { companyName, name, email, password, phone } = req.body;
 
   // 1. Check if user already exists
@@ -25,9 +29,11 @@ export const register = async (req: Request, res: Response): Promise<Response> =
     name: companyName,
     email: email,
     phone: phone,
-    planId: 1, 
+    planId: 1,
     status: true,
-    dueDate: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString().split('T')[0] // 3 Days Trial
+    dueDate: new Date(new Date().setDate(new Date().getDate() + 3))
+      .toISOString()
+      .split("T")[0], // 3 Days Trial
   });
 
   // 3. Create User (Admin)
@@ -39,17 +45,19 @@ export const register = async (req: Request, res: Response): Promise<Response> =
     passwordHash,
     profile: "admin",
     companyId: company.id,
-    active: true
+    active: true,
   });
 
-  const token = sign({ id: user.id, companyId: company.id } as object, authConfig.secret, {
-      expiresIn: authConfig.expiresIn
-  });
+  const token = sign(
+    { id: user.id, companyId: company.id } as object,
+    authConfig.secret,
+    { expiresIn: authConfig.expiresIn } as any
+  );
 
   return res.status(201).json({
     user,
     token,
-    company
+    company,
   });
 };
 
@@ -58,7 +66,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 
   const user = await (User as any).findOne({
     where: { email },
-    include: [{ model: Company, as: "company" }]
+    include: [{ model: Company, as: "company" }],
   });
 
   if (!user) {
@@ -71,17 +79,24 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     throw new AppError("Credenciais inválidas.", 401);
   }
 
-  const token = sign({ id: user.id, companyId: user.companyId } as object, authConfig.secret, {
-      expiresIn: authConfig.expiresIn
-  });
+  const token = sign(
+    { id: user.id, companyId: user.companyId } as object,
+    authConfig.secret,
+    {
+      expiresIn: String(authConfig.expiresIn),
+    } as any
+  );
 
   return res.json({
     user,
-    token
+    token,
   });
 };
 
-export const refresh = async (req: Request, res: Response): Promise<Response> => {
-    // Implement refresh token logic if needed
-    return res.json({ message: "Refresh not implemented yet" });
-}
+export const refresh = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  // Implement refresh token logic if needed
+  return res.json({ message: "Refresh not implemented yet" });
+};

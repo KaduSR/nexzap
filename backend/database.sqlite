@@ -1,0 +1,5 @@
+// Em vez de usar migrações, sincronize
+sequelize.sync({ force: false }).then(() => {
+  console.log('Banco sincronizado');
+  // Inicie o servidor aqui
+});

@@ -1,74 +1,33 @@
-import app from "./app";
-import { createServer } from "http";
-import { initIO } from "./libs/socket";
-import sequelize from "./database";
-import { runSeeds } from "./database/seeds/runSeeds";
-import cron from "node-cron";
-import { ProcessCampaignBatchService } from "./services/CampaignService/ProcessCampaignBatchService";
-import { ProcessScheduledMessages } from "./services/ScheduleServices/ProcessScheduledMessages";
-import { ProcessDunningService } from "./services/FinanceServices/ProcessDunningService";
-import { SyncIxcInvoicesService } from "./services/FinanceServices/SyncIxcInvoicesService";
+import express from "express";
+import cors from "cors";
+import { testConnection } from "./database/index";
 
-const server = createServer(app);
+const app = express();
+const PORT = process.env.PORT || 4000;
 
-// Initialize Socket IO
-initIO(server);
+app.use(cors());
+app.use(express.json());
 
-const PORT = process.env.PORT || 8080;
+async function startServer() {
+  try {
+    // Inicialize o banco de dados primeiro
+    await testConnection();
 
-// Initialize Database then Start Server
-sequelize.sync()
-  .then(async () => {
-    console.log("💾 Database connected and synced.");
-    
-    // Execute Seeds
-    await runSeeds();
+    console.log("Banco de dados inicializado com sucesso!");
 
-    // Start Schedulers
-    // Rodar a cada 1 minuto (Campanhas e Agendamentos)
-    cron.schedule("*/1 * * * *", async () => {
-      // console.log("Running Schedulers (Campaigns & Messages)...");
-      try {
-        await ProcessCampaignBatchService();
-        await ProcessScheduledMessages();
-      } catch (err) {
-        console.error("Error in Short-term Schedulers:", err);
-      }
+    // Rota de teste
+    app.get("/", (req, res) => {
+      res.json({ message: "API NexZap está funcionando!" });
     });
 
-    // Régua de Cobrança: Rodar todo dia às 09:00
-    cron.schedule("0 9 * * *", async () => {
-        console.log("⏰ Running Daily Dunning Process...");
-        try {
-            await ProcessDunningService();
-        } catch (err) {
-            console.error("Error in Dunning Scheduler:", err);
-        }
+    // Inicie o servidor
+    app.listen(PORT, () => {
+      console.log(`Servidor rodando na porta ${PORT}`);
     });
+  } catch (error) {
+    console.error("Falha ao inicializar o servidor:", error);
+    process.exit(1);
+  }
+}
 
-    // Sincronização Financeira: A cada 30 minutos
-    cron.schedule("*/30 * * * *", async () => {
-        console.log("🔄 Syncing Financial Data with ERP...");
-        try {
-            await SyncIxcInvoicesService();
-        } catch (err) {
-            console.error("Error in Financial Sync:", err);
-        }
-    });
-
-    // NOTE: Run once on startup for demo purposes
-    setTimeout(() => { SyncIxcInvoicesService(); }, 10000);
-
-    server.listen(PORT, () => {
-      console.log(`
-      🚀 Backend is running!
-      📡 Port: ${PORT}
-      🔗 Env: ${process.env.NODE_ENV || 'development'}
-      🔊 Socket.IO is ready for real-time events.
-      ⏰ Cron Jobs active.
-      `);
-    });
-  })
-  .catch((err) => {
-    console.error("❌ Database connection failed:", err);
-  });
+startServer();

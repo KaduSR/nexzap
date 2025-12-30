@@ -9,29 +9,29 @@ import * as IxcController from "./controllers/IxcController";
 import * as SipController from "./controllers/SipController";
 import * as FlowBuilderController from "./controllers/FlowBuilderController";
 import * as TicketController from "./controllers/TicketController";
-import * as TicketAiController from "./controllers/TicketAiController"; 
+import * as TicketAiController from "./controllers/TicketAiController";
 import * as MessageController from "./controllers/MessageController";
 import * as WhatsAppSessionController from "./controllers/WhatsAppSessionController";
-import * as QuickMessageController from "./controllers/QuickMessageController"; 
+import * as QuickMessageController from "./controllers/QuickMessageController";
 import * as SettingController from "./controllers/SettingController";
-import * as AiController from "./controllers/AiController"; 
-import * as CampaignController from "./controllers/CampaignController"; 
-import * as ScheduledMessageController from "./controllers/ScheduledMessageController"; 
-import * as DunningController from "./controllers/DunningController"; 
+import * as AiController from "./controllers/AiController";
+import * as CampaignController from "./controllers/CampaignController";
+import * as ScheduledMessageController from "./controllers/ScheduledMessageController";
+import * as DunningController from "./controllers/DunningController";
 import * as IncidentController from "./controllers/IncidentController";
 import * as WhatsappController from "./controllers/WhatsappController";
 import * as UserController from "./controllers/UserController";
 import * as FinancialController from "./controllers/FinancialController";
-import * as ServiceItemController from "./controllers/ServiceItemController"; 
-import * as QueueController from "./controllers/QueueController"; 
-import * as SuperAdminController from "./controllers/SuperAdminController"; 
+import * as ServiceItemController from "./controllers/ServiceItemController";
+import * as QueueController from "./controllers/QueueController";
+import * as SuperAdminController from "./controllers/SuperAdminController";
 import * as PlanController from "./controllers/PlanController"; // Import PlanController
-import * as SubscriptionController from "./controllers/SubscriptionController"; 
+import * as SubscriptionController from "./controllers/SubscriptionController";
 import whatsappRoutes from "./routes/whatsappRoutes";
 import isAuth from "./middleware/isAuth";
 
 const routes = Router();
-const upload = multer(uploadConfig);
+const upload = uploadConfig;
 
 // Public Routes
 routes.use(authRoutes); // Use Auth Routes
@@ -71,9 +71,21 @@ routes.put("/queues/:queueId", isAuth, QueueController.update);
 routes.delete("/queues/:queueId", isAuth, QueueController.remove);
 
 // Rotas Scheduled Messages
-routes.get("/tickets/:ticketId/schedules", isAuth, ScheduledMessageController.index);
-routes.post("/tickets/:ticketId/schedules", isAuth, ScheduledMessageController.store);
-routes.delete("/schedules/:scheduleId", isAuth, ScheduledMessageController.remove);
+routes.get(
+  "/tickets/:ticketId/schedules",
+  isAuth,
+  ScheduledMessageController.index
+);
+routes.post(
+  "/tickets/:ticketId/schedules",
+  isAuth,
+  ScheduledMessageController.store
+);
+routes.delete(
+  "/schedules/:scheduleId",
+  isAuth,
+  ScheduledMessageController.remove
+);
 
 // Rotas Campaigns
 routes.get("/campaigns", isAuth, CampaignController.index);
@@ -102,10 +114,19 @@ routes.put("/services/items/:id", isAuth, ServiceItemController.update);
 routes.delete("/services/items/:id", isAuth, ServiceItemController.remove);
 
 // Rotas Messages
-routes.post("/messages/:ticketId", isAuth, upload.array("medias"), MessageController.store);
+routes.post(
+  "/messages/:ticketId",
+  isAuth,
+  upload.array("medias"),
+  MessageController.store
+);
 
 // Rotas WhatsApp Actions
-routes.post("/whatsapp/:whatsappId/restart", isAuth, WhatsappController.restart);
+routes.post(
+  "/whatsapp/:whatsappId/restart",
+  isAuth,
+  WhatsappController.restart
+);
 routes.delete("/whatsapp/:whatsappId", isAuth, WhatsappController.remove);
 
 // Rotas WhatsApp Profile
@@ -123,7 +144,7 @@ routes.put(
 );
 
 // Rotas Users
-routes.get("/users", isAuth, UserController.index); 
+routes.get("/users", isAuth, UserController.index);
 routes.post("/users", isAuth, UserController.store); // Create
 routes.get("/users/:userId", isAuth, UserController.show); // Show
 routes.put("/users/:userId", isAuth, UserController.update); // Update
@@ -131,9 +152,19 @@ routes.delete("/users/:userId", isAuth, UserController.remove); // Delete
 
 // Rotas Quick Messages
 routes.get("/quick-messages", isAuth, QuickMessageController.index);
-routes.post("/quick-messages", isAuth, upload.single("media"), QuickMessageController.store);
+routes.post(
+  "/quick-messages",
+  isAuth,
+  upload.single("media"),
+  QuickMessageController.store
+);
 routes.get("/quick-messages/:id", isAuth, QuickMessageController.show);
-routes.put("/quick-messages/:id", isAuth, upload.single("media"), QuickMessageController.update);
+routes.put(
+  "/quick-messages/:id",
+  isAuth,
+  upload.single("media"),
+  QuickMessageController.update
+);
 routes.delete("/quick-messages/:id", isAuth, QuickMessageController.remove);
 
 // Rotas Settings
@@ -142,10 +173,10 @@ routes.put("/settings/:key", isAuth, SettingController.update);
 
 // Rotas SUPER ADMIN (SaaS)
 routes.get("/companies", isAuth, SuperAdminController.index);
-routes.post("/companies", isAuth, SuperAdminController.store); 
+routes.post("/companies", isAuth, SuperAdminController.store);
 routes.get("/companies/plans", isAuth, SuperAdminController.listPlans);
 routes.put("/companies/:id", isAuth, SuperAdminController.updateCompany);
-routes.get("/companies/me", isAuth, SuperAdminController.currentCompany); 
+routes.get("/companies/me", isAuth, SuperAdminController.currentCompany);
 
 // Rotas PLANS (SaaS Management)
 routes.get("/plans", isAuth, PlanController.index);
@@ -154,16 +185,25 @@ routes.put("/plans/:id", isAuth, PlanController.update);
 routes.delete("/plans/:id", isAuth, PlanController.remove);
 
 // Rota Subscription (Stripe)
-routes.post("/subscription/create-checkout", isAuth, SubscriptionController.createCheckoutSession);
+routes.post(
+  "/subscription/create-checkout",
+  isAuth,
+  SubscriptionController.createCheckoutSession
+);
 
 // Rota de Transcrição de Áudio com IA
-routes.post("/ai/transcribe", isAuth, upload.single("audio"), AiController.transcribe);
+routes.post(
+  "/ai/transcribe",
+  isAuth,
+  upload.single("audio"),
+  AiController.transcribe
+);
 
 // Rota de Health Check
 routes.get("/", (req, res) => {
-  return res.json({ 
+  return res.json({
     message: "Whaticket Plus Backend is Online 🟢",
-    timestamp: new Date() 
+    timestamp: new Date(),
   });
 });
 

@@ -1,71 +1,33 @@
-import { Sequelize } from "sequelize-typescript";
-import User from "../models/User";
-import Setting from "../models/Setting";
-import Whatsapp from "../models/Whatsapp";
-import FlowCampaign from "../models/FlowCampaign";
-import Ticket from "../models/Ticket";
-import Queue from "../models/Queue";
-import UserQueue from "../models/UserQueue";
-import Tag from "../models/Tag";
-import TicketTag from "../models/TicketTag";
-import Contact from "../models/Contact";
-import Message from "../models/Message";
-import Campaign from "../models/Campaign";
-import CampaignShipping from "../models/CampaignShipping";
-import QuickMessage from "../models/QuickMessage";
-import UserRating from "../models/UserRating";
-import ScheduledMessage from "../models/ScheduledMessage";
-import DunningSettings from "../models/DunningSettings";
-import Incident from "../models/Incident";
-import Invoice from "../models/Invoice";
-import ServiceItem from "../models/ServiceItem";
-import Plan from "../models/Plan";
-import Company from "../models/Company";
-import ApiIntegration from "../models/ApiIntegration";
-import QueueIntegrations from "../models/QueueIntegrations";
-import Chat from "../models/Chat";
-import ChatUser from "../models/ChatUser";
-import ChatMessage from "../models/ChatMessage";
-import ContactList from "../models/ContactList";
-import ContactListItem from "../models/ContactListItem";
-import Prompt from "../models/Prompt";
-import Baileys from "../models/Baileys";
-import dbConfig from "../config/database";
+import { Sequelize } from 'sequelize-typescript';
+import { Company } from './models/Company.model';
+import { User } from './models/User.model';
 
-const sequelize = new Sequelize(dbConfig as any);
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './src/database/database.sqlite',
+  models: [Company, User],
+  logging: console.log, // Ative logs para debug
+  define: {
+    timestamps: true,
+    underscored: false,
+  },
+});
 
-sequelize.addModels([
-    User, 
-    Setting, 
-    Whatsapp, 
-    FlowCampaign, 
-    Ticket, 
-    Queue, 
-    UserQueue, 
-    Tag, 
-    TicketTag,
-    Contact,
-    Message,
-    Campaign,
-    CampaignShipping,
-    QuickMessage,
-    UserRating,
-    ScheduledMessage,
-    DunningSettings,
-    Incident,
-    Invoice,
-    ServiceItem,
-    Plan,
-    Company,
-    ApiIntegration,
-    QueueIntegrations,
-    Chat,
-    ChatUser,
-    ChatMessage,
-    ContactList,
-    ContactListItem,
-    Prompt,
-    Baileys
-]);
+// Teste a conexão e sincronização
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexão com o banco estabelecida com sucesso.');
+    
+    // Sincronize os modelos com o banco
+    await sequelize.sync({ force: false });
+    console.log('Modelos sincronizados com o banco.');
+    
+    return sequelize;
+  } catch (error) {
+    console.error('Erro na conexão com o banco:', error);
+    throw error;
+  }
+}
 
-export default sequelize;
+export { sequelize, testConnection };
