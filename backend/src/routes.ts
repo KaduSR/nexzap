@@ -1,9 +1,10 @@
+// cspell:disable
 import { Router } from "express";
 import multer from "multer";
 import uploadConfig from "./config/upload";
 
 import apiIntegrationRoutes from "./routes/apiIntegrationRoutes";
-import authRoutes from "./routes/authRoutes"; // Import Auth Routes
+import authRoutes from "./routes/authRoutes";
 
 import * as IxcController from "./controllers/IxcController";
 import * as SipController from "./controllers/SipController";
@@ -25,52 +26,62 @@ import * as FinancialController from "./controllers/FinancialController";
 import * as ServiceItemController from "./controllers/ServiceItemController";
 import * as QueueController from "./controllers/QueueController";
 import * as SuperAdminController from "./controllers/SuperAdminController";
-import * as PlanController from "./controllers/PlanController"; // Import PlanController
+import * as PlanController from "./controllers/PlanController";
 import * as SubscriptionController from "./controllers/SubscriptionController";
 import whatsappRoutes from "./routes/whatsappRoutes";
 import isAuth from "./middleware/isAuth";
+import isSuper from "./middleware/isSuper"; // <--- NOVO IMPORT
 
 const routes = Router();
-const upload = uploadConfig;
+const upload = multer(uploadConfig);
 
-// Public Routes
-routes.use(authRoutes); // Use Auth Routes
+// --- Rotas Públicas ---
+routes.get("/", (req, res) => {
+  return res.json({
+    message: "NexZap Backend is Online 🟢",
+    timestamp: new Date(),
+  });
+});
+
+routes.get("/ping", (req, res) => {
+  return res.json({ message: "Pong 🏓", timestamp: new Date() });
+});
+
+routes.use(authRoutes);
 routes.use(apiIntegrationRoutes);
-// Webhook IXC (Public)
 routes.post("/ixc/webhook/payment", IxcController.webhookPayment);
 
-// Protected Routes (Apply isAuth manually or globally if preferred, here applying manually for clarity)
+// --- Rotas Protegidas ---
 routes.use(whatsappRoutes);
 
-// Rotas IXC
+// IXC
 routes.get("/ixc/customers", isAuth, IxcController.index);
 routes.get("/ixc/customers/:cpf", isAuth, IxcController.show);
 routes.get("/ixc/os-params", isAuth, IxcController.getOsParams);
 routes.post("/ixc/os", isAuth, IxcController.createOs);
 
-// Rotas SIP
+// SIP
 routes.get("/sip/settings", isAuth, SipController.getSettings);
 routes.post("/sip/settings", isAuth, SipController.saveSettings);
 
-// Rotas FlowBuilder
+// FlowBuilder
 routes.get("/flowbuilder", isAuth, FlowBuilderController.index);
 routes.get("/flowbuilder/active", isAuth, FlowBuilderController.getFlow);
 routes.post("/flowbuilder", isAuth, FlowBuilderController.save);
 
-// Rotas Tickets
+// Tickets
 routes.get("/tickets/kanban", isAuth, TicketController.indexKanban);
 routes.post("/tickets", isAuth, TicketController.store);
 routes.put("/tickets/:ticketId", isAuth, TicketController.update);
-// Ticket AI Copilot
 routes.get("/tickets/:ticketId/ai-analysis", isAuth, TicketAiController.show);
 
-// Rotas Queues (Setores)
+// Queues
 routes.get("/queues", isAuth, QueueController.index);
 routes.post("/queues", isAuth, QueueController.store);
 routes.put("/queues/:queueId", isAuth, QueueController.update);
 routes.delete("/queues/:queueId", isAuth, QueueController.remove);
 
-// Rotas Scheduled Messages
+// Schedules
 routes.get(
   "/tickets/:ticketId/schedules",
   isAuth,
@@ -87,33 +98,33 @@ routes.delete(
   ScheduledMessageController.remove
 );
 
-// Rotas Campaigns
+// Campaigns
 routes.get("/campaigns", isAuth, CampaignController.index);
 routes.post("/campaigns", isAuth, CampaignController.store);
 
-// Rotas Dunning (Régua de Cobrança)
+// Dunning
 routes.get("/dunning", isAuth, DunningController.index);
 routes.post("/dunning", isAuth, DunningController.store);
 routes.put("/dunning/:id", isAuth, DunningController.update);
 routes.delete("/dunning/:id", isAuth, DunningController.remove);
 routes.post("/dunning/run", isAuth, DunningController.runNow);
 
-// Rotas Financial Dashboard
+// Financial
 routes.get("/financial/dashboard", isAuth, FinancialController.index);
 
-// Rotas Incidents (Panic Mode)
+// Incidents
 routes.get("/incidents", isAuth, IncidentController.index);
 routes.post("/incidents", isAuth, IncidentController.store);
 routes.put("/incidents/:id", isAuth, IncidentController.update);
 routes.get("/tags", isAuth, IncidentController.listTags);
 
-// Rotas Service Price List (Tabela de Serviços)
+// Services
 routes.get("/services/items", isAuth, ServiceItemController.index);
 routes.post("/services/items", isAuth, ServiceItemController.store);
 routes.put("/services/items/:id", isAuth, ServiceItemController.update);
 routes.delete("/services/items/:id", isAuth, ServiceItemController.remove);
 
-// Rotas Messages
+// Messages
 routes.post(
   "/messages/:ticketId",
   isAuth,
@@ -121,36 +132,33 @@ routes.post(
   MessageController.store
 );
 
-// Rotas WhatsApp Actions
+// WhatsApp Actions
 routes.post(
   "/whatsapp/:whatsappId/restart",
   isAuth,
   WhatsappController.restart
 );
 routes.delete("/whatsapp/:whatsappId", isAuth, WhatsappController.remove);
-
-// Rotas WhatsApp Profile
 routes.post(
   "/whatsapp/profile-picture/:whatsappId",
   isAuth,
   upload.single("file"),
   WhatsAppSessionController.updateProfilePicture
 );
-
 routes.put(
   "/whatsapp/profile-status/:whatsappId",
   isAuth,
   WhatsAppSessionController.updateProfileStatus
 );
 
-// Rotas Users
+// Users
 routes.get("/users", isAuth, UserController.index);
-routes.post("/users", isAuth, UserController.store); // Create
-routes.get("/users/:userId", isAuth, UserController.show); // Show
-routes.put("/users/:userId", isAuth, UserController.update); // Update
-routes.delete("/users/:userId", isAuth, UserController.remove); // Delete
+routes.post("/users", isAuth, UserController.store);
+routes.get("/users/:userId", isAuth, UserController.show);
+routes.put("/users/:userId", isAuth, UserController.update);
+routes.delete("/users/:userId", isAuth, UserController.remove);
 
-// Rotas Quick Messages
+// Quick Messages
 routes.get("/quick-messages", isAuth, QuickMessageController.index);
 routes.post(
   "/quick-messages",
@@ -167,43 +175,52 @@ routes.put(
 );
 routes.delete("/quick-messages/:id", isAuth, QuickMessageController.remove);
 
-// Rotas Settings
+// Settings
 routes.get("/settings", isAuth, SettingController.index);
 routes.put("/settings/:key", isAuth, SettingController.update);
 
-// Rotas SUPER ADMIN (SaaS)
-routes.get("/companies", isAuth, SuperAdminController.index);
-routes.post("/companies", isAuth, SuperAdminController.store);
-routes.get("/companies/plans", isAuth, SuperAdminController.listPlans);
-routes.put("/companies/:id", isAuth, SuperAdminController.updateCompany);
-routes.get("/companies/me", isAuth, SuperAdminController.currentCompany);
-// Rotas PLANS (SaaS Management)
-routes.get("/plans", isAuth, PlanController.index);
-routes.post("/plans", isAuth, PlanController.store);
-routes.put("/plans/:id", isAuth, PlanController.update);
-routes.delete("/plans/:id", isAuth, PlanController.remove);
+// =========================================================================
+// 🔒 ROTAS BLINDADAS (SUPER ADMIN)
+// =========================================================================
 
-// Rota Subscription (Stripe)
+// Gestão de Empresas
+routes.get("/companies", isAuth, isSuper, SuperAdminController.index);
+routes.post("/companies", isAuth, isSuper, SuperAdminController.store);
+routes.get("/companies/plans", isAuth, isSuper, SuperAdminController.listPlans);
+routes.put(
+  "/companies/:id",
+  isAuth,
+  isSuper,
+  SuperAdminController.updateCompany
+);
+routes.get(
+  "/companies/me",
+  isAuth,
+  isSuper,
+  SuperAdminController.currentCompany
+);
+
+// Gestão de Planos
+routes.get("/plans", isAuth, isSuper, PlanController.index);
+routes.post("/plans", isAuth, isSuper, PlanController.store);
+routes.put("/plans/:id", isAuth, isSuper, PlanController.update);
+routes.delete("/plans/:id", isAuth, isSuper, PlanController.remove);
+
+// =========================================================================
+
+// Subscription (Stripe)
 routes.post(
   "/subscription/create-checkout",
   isAuth,
   SubscriptionController.createCheckoutSession
 );
 
-// Rota de Transcrição de Áudio com IA
+// AI
 routes.post(
   "/ai/transcribe",
   isAuth,
   upload.single("audio"),
   AiController.transcribe
 );
-
-// Rota de Health Check
-routes.get("/", (req, res) => {
-  return res.json({
-    message: "Whaticket Plus Backend is Online 🟢",
-    timestamp: new Date(),
-  });
-});
 
 export default routes;

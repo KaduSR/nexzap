@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   AutoIncrement,
   Default,
-  BelongsToMany
+  BelongsToMany,
 } from "sequelize-typescript";
 import Queue from "./Queue";
 import UserQueue from "./UserQueue";
@@ -41,6 +41,12 @@ class User extends Model<User> {
   @Default(true)
   @Column(DataType.BOOLEAN)
   active!: boolean;
+
+  // --- CORREÇÃO: Adicionado o campo SUPER ---
+  @Default(false)
+  @Column(DataType.BOOLEAN)
+  super!: boolean;
+  // ------------------------------------------
 
   @Column(DataType.INTEGER)
   companyId!: number;
