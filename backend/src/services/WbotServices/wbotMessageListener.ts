@@ -60,7 +60,6 @@ const verifyMediaMessage = async (
   const type = Object.keys(messageContent || {})[0];
   const mediaTypes = ["imageMessage", "videoMessage", "audioMessage", "documentMessage", "stickerMessage"];
 
-  if (msg.key.fromMe) return;
   if (!mediaTypes.includes(type)) return;
 
   try {

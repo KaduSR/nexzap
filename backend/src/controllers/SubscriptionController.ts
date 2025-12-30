@@ -5,7 +5,7 @@ import Company from "../models/Company";
 import Plan from "../models/Plan";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-02-24.acacia",
 });
 
 export const createCheckoutSession = async (req: any, res: Response): Promise<Response> => {
@@ -18,7 +18,7 @@ export const createCheckoutSession = async (req: any, res: Response): Promise<Re
   if (!company) throw new AppError("Company not found", 404);
   if (!plan) throw new AppError("Plan not found", 404);
   
-  // 1. Create or Retrieve Stripe Customer
+  // 1. Criar ou Recuperar Cliente Stripe
   let customerId = company.stripeCustomerId;
 
   if (!customerId) {
@@ -31,7 +31,7 @@ export const createCheckoutSession = async (req: any, res: Response): Promise<Re
         customerId = customer.id;
         await company.update({ stripeCustomerId: customerId });
     } catch (e) {
-        // Mock fallback for dev without stripe key
+        // Mock fallback para dev sem chave
         if (!process.env.STRIPE_SECRET_KEY) {
              return res.json({ url: `${frontendUrl}/subscription?status=success&mock=true` });
         }
@@ -42,39 +42,41 @@ export const createCheckoutSession = async (req: any, res: Response): Promise<Re
   const priceId = plan.stripePriceId || "price_mock_id";
 
   try {
-      // ---------------------------------------------------------
-      // FLUXO PIX / BOLETO (Recurring Invoice)
-      // ---------------------------------------------------------
+      // =========================================================
+      // FLUXO PIX / BOLETO (Via Fatura Recorrente)
+      // =========================================================
       if (paymentMethod === "pix") {
-          // Creates a subscription that emails the invoice. 
-          // We also fetch the first invoice immediately to redirect the user to pay it.
+          // O Stripe Checkout para 'subscription' não suporta Pix nativamente se não for automático.
+          // A solução é criar a assinatura com collection_method='send_invoice'.
+          
           const subscription = await stripe.subscriptions.create({
               customer: customerId,
               items: [{ price: priceId }],
-              collection_method: 'send_invoice', // Key for Pix/Boleto support in recurring
-              days_until_due: 3, // Due in 3 days
-              payment_behavior: 'default_incomplete', // Create even if not paid yet
+              collection_method: 'send_invoice', // Chave para permitir Pix/Boleto
+              days_until_due: 3, // Vence em 3 dias
+              payment_behavior: 'default_incomplete', // Cria a assinatura mesmo sem pagar agora
               metadata: { 
                   companyId: company.id.toString(), 
                   planId: plan.id.toString(),
                   paymentType: "pix_invoice"
               },
-              expand: ['latest_invoice']
+              expand: ['latest_invoice'] // Retorna a fatura já criada
           });
 
-          // Get the hosted invoice URL to redirect the user
+          // Pegamos o link da fatura hospedada
           const invoice = subscription.latest_invoice as Stripe.Invoice;
           
           if (invoice && invoice.hosted_invoice_url) {
+              // Redireciona o usuário para pagar a fatura
               return res.json({ url: invoice.hosted_invoice_url });
           } else {
               throw new AppError("Invoice URL not generated");
           }
       } 
 
-      // ---------------------------------------------------------
-      // FLUXO CARTÃO DE CRÉDITO (Checkout Session)
-      // ---------------------------------------------------------
+      // =========================================================
+      // FLUXO CARTÃO DE CRÉDITO (Padrão Checkout)
+      // =========================================================
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "subscription",

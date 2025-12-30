@@ -21,17 +21,20 @@ import Invoice from "../models/Invoice";
 import ServiceItem from "../models/ServiceItem";
 import Plan from "../models/Plan";
 import Company from "../models/Company";
+import ApiIntegration from "../models/ApiIntegration";
+import QueueIntegrations from "../models/QueueIntegrations";
+import Chat from "../models/Chat";
+import ChatUser from "../models/ChatUser";
+import ChatMessage from "../models/ChatMessage";
+import ContactList from "../models/ContactList";
+import ContactListItem from "../models/ContactListItem";
+import Prompt from "../models/Prompt";
+import Baileys from "../models/Baileys";
+import dbConfig from "../config/database";
 
-// In a real scenario, use process.env vars
-const dbConfig = {
-  dialect: "sqlite" as const, // Cast to specific string literal for Sequelize types
-  storage: "./database.sqlite", 
-  logging: false,
-};
+const sequelize = new Sequelize(dbConfig as any);
 
-const sequelize = new Sequelize({
-  ...dbConfig,
-  models: [
+sequelize.addModels([
     User, 
     Setting, 
     Whatsapp, 
@@ -53,8 +56,16 @@ const sequelize = new Sequelize({
     Invoice,
     ServiceItem,
     Plan,
-    Company
-  ], 
-});
+    Company,
+    ApiIntegration,
+    QueueIntegrations,
+    Chat,
+    ChatUser,
+    ChatMessage,
+    ContactList,
+    ContactListItem,
+    Prompt,
+    Baileys
+]);
 
 export default sequelize;

@@ -6,10 +6,13 @@ import Invoice from "../../models/Invoice";
 import Contact from "../../models/Contact";
 import Plan from "../../models/Plan";
 import Company from "../../models/Company";
+import Ticket from "../../models/Ticket";
+import Whatsapp from "../../models/Whatsapp";
 
 export const runSeeds = async () => {
-    
-    // 1. Create Plans (The Menu)
+    console.log("🌱 Starting Seed Process for NexZap...");
+
+    // 1. Create Plans (NexZap Pricing)
     const plans = [
         {
             id: 1,
@@ -23,7 +26,9 @@ export const runSeeds = async () => {
             useExternalApi: false,
             useKanban: true,
             useOpenAi: false,
-            useIntegrations: false
+            useIntegrations: false,
+            useFieldService: false,
+            stripePriceId: "price_start_mock"
         },
         {
             id: 2,
@@ -36,8 +41,10 @@ export const runSeeds = async () => {
             useInternalChat: true,
             useExternalApi: true,
             useKanban: true,
-            useOpenAi: true,
-            useIntegrations: false
+            useOpenAi: true, // IA enabled
+            useIntegrations: false,
+            useFieldService: true,
+            stripePriceId: "price_pro_mock"
         },
         {
             id: 3,
@@ -51,155 +58,152 @@ export const runSeeds = async () => {
             useExternalApi: true,
             useKanban: true,
             useOpenAi: true,
-            useIntegrations: true // ISP Features
+            useIntegrations: true, // ISP Features enabled (IXC, Voalle)
+            useFieldService: true,
+            stripePriceId: "price_enterprise_mock"
         }
     ];
 
     for (const plan of plans) {
         await (Plan as any).upsert(plan);
     }
-    console.log("🌱 Seed: Plans created/updated.");
+    console.log("✅ Plans created/updated.");
 
-    // 2. Create Default Company (SUPER ADMIN COMPANY)
-    const company = await (Company as any).findOne({ where: { id: 1 } });
-    if (!company) {
-        await (Company as any).create({
-            id: 1,
-            name: "Whaticket SaaS (Matriz)",
-            email: "admin@whaticket.com",
-            document: "00.000.000/0001-91",
-            phone: "5511999999999",
-            address: "Av. Paulista, 1000",
-            city: "São Paulo",
-            state: "SP",
-            zipcode: "01310-100",
-            planId: 3, // Starts with Enterprise
-            status: true,
-            dueDate: "2099-12-31" // Lifetime
-        });
-        console.log("🌱 Seed: Default Company created.");
-    }
+    // 2. Create Default Company (NexZap Provider)
+    const companyData = {
+        id: 1,
+        name: "Provedor Exemplo (Matriz)",
+        email: "admin@nexzap.com.br",
+        document: "00.000.000/0001-91",
+        phone: "5511999999999",
+        address: "Av. da Tecnologia, 1000",
+        city: "São Paulo",
+        state: "SP",
+        zipcode: "01000-000",
+        planId: 3, // Starts with Enterprise features
+        status: true,
+        dueDate: "2030-12-31", // Lifetime demo
+        stripeSubscriptionStatus: "active"
+    };
+
+    const [company] = await (Company as any).findOrCreate({
+        where: { id: 1 },
+        defaults: companyData
+    });
+    
+    // Ensure company has correct plan if it already existed
+    await company.update({ planId: 3 });
+    console.log("✅ Default Company created.");
 
     // 3. Create Default Admin User
-    const adminUser = await (User as any).findOne({ where: { email: "admin@whaticket.com" } });
+    const adminUser = await (User as any).findOne({ where: { email: "admin@nexzap.com.br" } });
     if (!adminUser) {
         await (User as any).create({
-            name: "Super Admin",
-            email: "admin@whaticket.com",
-            passwordHash: "$2a$08$WaFHn.L1iE..", // Mock hash
+            name: "Admin NexZap",
+            email: "admin@nexzap.com.br",
+            passwordHash: "123456", // In production this is hashed by the Controller/Model hooks
             profile: "admin",
             tokenVersion: 0,
             active: true,
             companyId: 1
         });
-        console.log("🌱 Seed: Admin user created.");
+        console.log("✅ Admin user created (Pass: 123456).");
     }
 
-    // 4. Create Default Settings
+    // 4. Create Default Settings (Branding & AI)
     const settings = [
-        { key: "userCreation", value: "enabled" },
-        { key: "timeZone", value: "America/Sao_Paulo" },
-        { key: "checkMsgIsGroup", value: "enabled" },
+        { key: "userCreation", value: "enabled", companyId: 1 },
+        { key: "timeZone", value: "America/Sao_Paulo", companyId: 1 },
+        { key: "checkMsgIsGroup", value: "enabled", companyId: 1 },
         
-        // Response AI Settings
-        { key: "ai_enabled", value: "true" },
-        { key: "ai_provider", value: "gemini" }, 
-        { key: "ai_system_prompt", value: "Você é um assistente virtual inteligente e prestativo do Whaticket Plus." },
-        { key: "ai_api_key", value: "" },
+        // Branding NexZap
+        { key: "company_name", value: "NexZap", companyId: 1 },
+        { key: "primary_color", value: "#4f46e5", companyId: 1 }, // Indigo
+        { key: "secondary_color", value: "#10b981", companyId: 1 }, // Emerald
         
-        // Transcription AI Settings
-        { key: "ai_auto_transcribe_audio", value: "false" },
-        { key: "ai_transcription_provider", value: "gemini" },
-        { key: "ai_transcription_api_key", value: "" },
-        { key: "ai_transcription_model", value: "gemini-2.5-flash-native-audio-preview-09-2025" },
-
-
-        // Business Hours Settings
-        { key: "business_hours_check", value: "false" }, // Master switch
-        ...['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map(day => ({ key: `business_hours_${day}_active`, value: 'true' })),
-        ...['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map(day => ({ key: `business_hours_${day}_start`, value: '08:00' })),
-        ...['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map(day => ({ key: `business_hours_${day}_end`, value: '18:00' })),
-        { key: "business_hours_saturday_active", value: "true" },
-        { key: "business_hours_saturday_start", value: "08:00" },
-        { key: "business_hours_saturday_end", value: "12:00" },
-        { key: "business_hours_sunday_active", value: "false" },
-        { key: "business_hours_sunday_start", value: "08:00" },
-        { key: "business_hours_sunday_end", value: "12:00" }
+        // AI Settings
+        { key: "ai_enabled", value: "true", companyId: 1 },
+        { key: "ai_provider", value: "gemini", companyId: 1 }, 
+        { key: "ai_system_prompt", value: "Você é o assistente virtual do Provedor de Internet. Seja cortês e ajude com faturas e suporte técnico.", companyId: 1 },
+        { key: "ai_model", value: "gemini-3-flash-preview", companyId: 1 },
+        
+        // Business Hours (Example)
+        { key: "business_hours_check", value: "false", companyId: 1 }, 
     ];
 
     for (const s of settings) {
-        const settingExists = await (Setting as any).findOne({ where: { key: s.key } });
-        if (!settingExists) {
-            await (Setting as any).create(s);
-        } else {
-            // Update only if it's a new key being added to avoid overwriting user changes
-            if (!settingExists) await (Setting as any).create(s);
+        await (Setting as any).upsert(s);
+    }
+    console.log("✅ Default settings configured.");
+
+    // 5. Create Queues (Setores)
+    const queues = [
+        { id: 1, name: "Suporte Técnico", color: "#6366f1", greetingMessage: "Olá! Um técnico analisará sua conexão em instantes." },
+        { id: 2, name: "Financeiro", color: "#10b981", greetingMessage: "Bem-vindo ao financeiro. Para 2ª via de boleto, digite seu CPF." },
+        { id: 3, name: "Comercial", color: "#f59e0b", greetingMessage: "Quer assinar nossa fibra? Veja nossos planos!" }
+    ];
+
+    for (const q of queues) {
+        await (Queue as any).upsert(q);
+    }
+    console.log("✅ Queues created.");
+
+    // 6. Create Mock Contacts & Tickets (For Kanban/Dashboard)
+    const contactCount = await (Contact as any).count();
+    if (contactCount === 0) {
+        const contactsData = [
+            { name: "João Silva", number: "5511999990001", profilePicUrl: "https://ui-avatars.com/api/?name=Joao+Silva&background=random", isGroup: false, companyId: 1 },
+            { name: "Maria Souza", number: "5511999990002", profilePicUrl: "https://ui-avatars.com/api/?name=Maria+Souza&background=random", isGroup: false, companyId: 1 },
+            { name: "Empresa Alpha", number: "5511999990003", profilePicUrl: "https://ui-avatars.com/api/?name=Empresa+Alpha&background=random", isGroup: false, companyId: 1 },
+        ];
+
+        for (const c of contactsData) {
+            const contact = await (Contact as any).create(c);
+            
+            // Create a Ticket for each
+            await (Ticket as any).create({
+                contactId: contact.id,
+                status: Math.random() > 0.5 ? "open" : "pending",
+                whatsappId: 1,
+                lastMessage: "Gostaria de verificar minha fatura...",
+                unreadMessages: Math.floor(Math.random() * 5),
+                companyId: 1,
+                queueId: Math.floor(Math.random() * 3) + 1
+            });
         }
-    }
-    console.log("🌱 Seed: Default settings checked/created.");
-
-    // 5. Create Default Queues
-    const queueExists = await (Queue as any).count();
-    if (queueExists === 0) {
-        await (Queue as any).create({
-            name: "Suporte Geral",
-            color: "#6366f1",
-            greetingMessage: "Olá! Bem-vindo ao suporte."
-        });
-        await (Queue as any).create({
-            name: "Financeiro",
-            color: "#10b981",
-            greetingMessage: "Olá! Você está no financeiro."
-        });
-        console.log("🌱 Seed: Default queues created.");
+        console.log("✅ Mock Contacts & Tickets created.");
     }
 
-    // 6. Create Default Flow
-    const flowExists = await (FlowCampaign as any).count();
-    if (flowExists === 0) {
-        await (FlowCampaign as any).create({
-            id: 1,
-            name: "Fluxo Principal",
-            phrase: "ola",
-            active: true,
-            flow: {
-                nodes: [
-                    { 
-                        id: 'node_1', 
-                        type: 'trigger', 
-                        label: 'Início do Fluxo', 
-                        data: { trigger: 'Qualquer Mensagem' },
-                        position: { x: 400, y: 50 }
-                    }
-                ]
-            }
-        });
-        console.log("🌱 Seed: Default flow created.");
-    }
-
-    // 7. Create Dummy Invoices for Dashboard
+    // 7. Create Financial Data (For Dashboard Charts)
     const invoiceCount = await (Invoice as any).count();
     if (invoiceCount === 0) {
-        // Ensure a contact exists
-        const [contact] = await (Contact as any).findOrCreate({
-            where: { number: '5511999999999' },
-            defaults: { name: 'Cliente Seed', isGroup: false, companyId: 1 }
-        });
-
         const today = new Date();
-        const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
-        const dayBefore = new Date(today); dayBefore.setDate(dayBefore.getDate() - 2);
+        
+        // Helper to get date X days ago
+        const daysAgo = (d: number) => {
+            const date = new Date();
+            date.setDate(date.getDate() - d);
+            return date;
+        }
 
-        // Paid Invoices (Revenue)
-        await (Invoice as any).create({ value: 150.00, status: 'paid', paidAt: today, dueDate: today, contactId: contact.id, companyId: 1 });
-        await (Invoice as any).create({ value: 200.50, status: 'paid', paidAt: today, dueDate: today, contactId: contact.id, companyId: 1 });
-        await (Invoice as any).create({ value: 99.90, status: 'paid', paidAt: yesterday, dueDate: yesterday, contactId: contact.id, companyId: 1 });
-        await (Invoice as any).create({ value: 299.90, status: 'paid', paidAt: dayBefore, dueDate: dayBefore, contactId: contact.id, companyId: 1 });
+        const invoices = [
+            // Revenue (Paid)
+            { value: 150.00, status: 'paid', paidAt: today, dueDate: today, contactId: 1, companyId: 1 },
+            { value: 99.90, status: 'paid', paidAt: today, dueDate: today, contactId: 2, companyId: 1 },
+            { value: 299.90, status: 'paid', paidAt: daysAgo(1), dueDate: daysAgo(1), contactId: 3, companyId: 1 },
+            { value: 150.00, status: 'paid', paidAt: daysAgo(2), dueDate: daysAgo(2), contactId: 1, companyId: 1 },
+            { value: 99.90, status: 'paid', paidAt: daysAgo(3), dueDate: daysAgo(3), contactId: 2, companyId: 1 },
+            
+            // Overdue
+            { value: 120.00, status: 'overdue', dueDate: daysAgo(5), contactId: 1, companyId: 1 },
+            { value: 450.00, status: 'overdue', dueDate: daysAgo(10), contactId: 3, companyId: 1 },
+        ];
 
-        // Overdue Invoices
-        await (Invoice as any).create({ value: 120.00, status: 'overdue', dueDate: dayBefore, contactId: contact.id, companyId: 1 });
-        await (Invoice as any).create({ value: 450.00, status: 'overdue', dueDate: yesterday, contactId: contact.id, companyId: 1 });
-
-        console.log("🌱 Seed: Financial Data Created.");
+        for (const inv of invoices) {
+            await (Invoice as any).create(inv);
+        }
+        console.log("✅ Financial Data (Invoices) populated.");
     }
+
+    console.log("🏁 Seed Process Completed!");
 };

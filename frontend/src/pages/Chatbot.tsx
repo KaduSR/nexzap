@@ -328,7 +328,7 @@ const Chatbot: React.FC = () => {
                   {/* Node Content Preview */}
                   <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 font-medium">
                      {node.type === 'message' && <p className="line-clamp-2">"{node.data.content}"</p>}
-                     {node.type === 'input' && <p className="line-clamp-2">Q: "{node.data.content}" -> Salvar em: <b>{node.data.variable}</b></p>}
+                     {node.type === 'input' && <p className="line-clamp-2">Q: "{node.data.content}" &rarr; Salvar em: <b>{node.data.variable}</b></p>}
                      {node.type === 'wait' && <p>Aguardar <b>{node.data.seconds}</b> segundos.</p>}
                      {node.type === 'tag' && <p>Tag: <b>{node.data.tag}</b></p>}
                      {node.type === 'condition' && <p>Se <b>{node.data.variable}</b> {node.data.operator} ...</p>}

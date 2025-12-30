@@ -20,7 +20,7 @@ const Subscription: React.FC = () => {
   const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<number | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card'); // State for payment method
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card'); // Novo Estado
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const status = searchParams.get('status');
@@ -57,7 +57,7 @@ const Subscription: React.FC = () => {
               },
               body: JSON.stringify({
                   planId,
-                  paymentMethod, // Send selected method
+                  paymentMethod, // Envia o método escolhido
                   frontendUrl: window.location.origin
               })
           });
@@ -65,7 +65,8 @@ const Subscription: React.FC = () => {
           if (res.ok) {
               const data = await res.json();
               if (data.url) {
-                  window.location.href = data.url; // Redirect to Stripe (Checkout or Invoice)
+                  // Redireciona para o Stripe (Checkout ou Fatura)
+                  window.location.href = data.url; 
               } else {
                   alert("Modo Desenvolvimento: Simulação de pagamento concluída.");
                   navigate('/subscription?status=success');
@@ -112,14 +113,14 @@ const Subscription: React.FC = () => {
         </p>
       </header>
 
-      {/* Payment Method Selector */}
-      <div className="flex justify-center mt-8">
+      {/* SELETOR DE MÉTODO DE PAGAMENTO */}
+      <div className="flex flex-col items-center mt-8 space-y-3">
           <div className="bg-slate-900 p-1.5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row gap-1 shadow-xl">
               <button 
                   onClick={() => setPaymentMethod('card')}
                   className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold text-sm transition-all ${
                       paymentMethod === 'card' 
-                      ? 'bg-indigo-600 text-white shadow-lg' 
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
                       : 'text-slate-400 hover:text-white hover:bg-slate-800'
                   }`}
               >
@@ -131,7 +132,7 @@ const Subscription: React.FC = () => {
                   onClick={() => setPaymentMethod('pix')}
                   className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold text-sm transition-all ${
                       paymentMethod === 'pix' 
-                      ? 'bg-emerald-600 text-white shadow-lg' 
+                      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' 
                       : 'text-slate-400 hover:text-white hover:bg-slate-800'
                   }`}
               >
@@ -140,14 +141,13 @@ const Subscription: React.FC = () => {
                   <span className="hidden sm:inline opacity-60 text-[10px] uppercase tracking-wider ml-1 bg-black/20 px-1.5 py-0.5 rounded">Fatura</span>
               </button>
           </div>
+          <p className="text-xs text-slate-500 font-medium max-w-md text-center">
+              {paymentMethod === 'card' 
+                ? "Cobrança automática mensal no cartão. Liberação imediata." 
+                : "Você receberá uma fatura por email todo mês com código Pix e Boleto. Liberação após pagamento."
+              }
+          </p>
       </div>
-      
-      <p className="text-center text-xs text-slate-500 font-medium">
-          {paymentMethod === 'card' 
-            ? "Cobrança automática mensal no cartão. Liberação imediata." 
-            : "Você receberá uma fatura por email todo mês com código Pix e Boleto."
-          }
-      </p>
 
       {/* Pricing Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">

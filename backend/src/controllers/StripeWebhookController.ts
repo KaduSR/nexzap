@@ -3,13 +3,13 @@ import Stripe from "stripe";
 import Company from "../models/Company";
 import { logger } from "../utils/logger";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", { apiVersion: "2023-10-16" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_mock", { apiVersion: "2025-02-24.acacia" });
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export const handleWebhook = async (req: Request, res: Response): Promise<Response> => {
   let event: Stripe.Event = req.body;
 
-  // Verify Signature if Secret is provided
+  // Verificar Assinatura se houver Secret
   if (endpointSecret) {
       const sig = req.headers["stripe-signature"] as string;
       try {
@@ -22,13 +22,14 @@ export const handleWebhook = async (req: Request, res: Response): Promise<Respon
 
   try {
       switch (event.type) {
+        // FLUXO CARTÃO: Checkout completado
         case "checkout.session.completed":
           const session = event.data.object as Stripe.Checkout.Session;
           await handleSubscriptionCreated(session);
           break;
         
+        // FLUXO PIX/BOLETO: Fatura paga
         case "invoice.payment_succeeded":
-          // Subscription renewed OR First payment via Invoice (Pix flow)
           const invoice = event.data.object as Stripe.Invoice;
           await handleInvoicePaid(invoice);
           break;
@@ -36,8 +37,7 @@ export const handleWebhook = async (req: Request, res: Response): Promise<Respon
         case "customer.subscription.deleted":
         case "customer.subscription.updated":
           const subscription = event.data.object as Stripe.Subscription;
-          // If canceled or unpaid (and not incomplete which is the starting state for Pix)
-          if (subscription.status === 'canceled' || (subscription.status === 'unpaid')) {
+          if (subscription.status === 'canceled' || (subscription.status === 'unpaid' && subscription.latest_invoice)) {
               await handleSubscriptionDeleted(subscription);
           }
           break;
@@ -49,15 +49,14 @@ export const handleWebhook = async (req: Request, res: Response): Promise<Respon
       }
   } catch (err) {
       logger.error(`Error processing webhook: ${err}`);
-      // Don't return 500 to Stripe, or it will retry endlessly
   }
 
   return res.json({ received: true });
 };
 
 async function handleSubscriptionCreated(session: Stripe.Checkout.Session) {
-  const companyId = session.subscription_data?.metadata?.companyId || session.metadata?.companyId;
-  const planId = session.subscription_data?.metadata?.planId || session.metadata?.planId;
+  const companyId = session.subscription && typeof session.subscription === 'object' ? session.subscription.metadata?.companyId : session.metadata?.companyId;
+  const planId = session.subscription && typeof session.subscription === 'object' ? session.subscription.metadata?.planId : session.metadata?.planId;
 
   if (companyId && session.subscription) {
      const company = await (Company as any).findByPk(companyId);
@@ -79,17 +78,18 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
     const customerId = invoice.customer as string;
     const subscriptionId = invoice.subscription as string;
     
-    // Find company by Stripe Customer ID
+    // Busca empresa pelo Stripe Customer ID
     const company = await (Company as any).findOne({ where: { stripeCustomerId: customerId } });
     
     if (company) {
         const nextMonth = new Date();
         nextMonth.setDate(nextMonth.getDate() + 30);
         
+        // Ativa a empresa e renova o vencimento
         await company.update({ 
             status: true,
             dueDate: nextMonth.toISOString().split('T')[0],
-            stripeSubscriptionId: subscriptionId, // Ensure subscription ID is linked (important for Pix flow)
+            stripeSubscriptionId: subscriptionId, 
             stripeSubscriptionStatus: 'active'
         });
         logger.info(`[Stripe] Invoice paid for company ${company.id}. Subscription Active.`);

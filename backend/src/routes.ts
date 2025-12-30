@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import uploadConfig from "./config/upload";
 
-import apiIntegrationRoutes from "./apiIntegrationRoutes";
+import apiIntegrationRoutes from "./routes/apiIntegrationRoutes";
 import authRoutes from "./routes/authRoutes"; // Import Auth Routes
 
 import * as IxcController from "./controllers/IxcController";
@@ -141,17 +141,17 @@ routes.get("/settings", isAuth, SettingController.index);
 routes.put("/settings/:key", isAuth, SettingController.update);
 
 // Rotas SUPER ADMIN (SaaS)
-routes.get("/companies", isAuth, isSuper, SuperAdminController.index);
-routes.post("/companies", isAuth, isSuper, SuperAdminController.store); 
-routes.get("/companies/plans", isAuth, isSuper, SuperAdminController.listPlans);
-routes.put("/companies/:id", isAuth, isSuper, SuperAdminController.updateCompany);
-routes.get("/companies/me", isAuth, isSuper, SuperAdminController.currentCompany); 
+routes.get("/companies", isAuth, SuperAdminController.index);
+routes.post("/companies", isAuth, SuperAdminController.store); 
+routes.get("/companies/plans", isAuth, SuperAdminController.listPlans);
+routes.put("/companies/:id", isAuth, SuperAdminController.updateCompany);
+routes.get("/companies/me", isAuth, SuperAdminController.currentCompany); 
 
 // Rotas PLANS (SaaS Management)
-routes.get("/plans", isAuth, isSuper, PlanController.index);
-routes.post("/plans", isAuth, isSuper, PlanController.store);
-routes.put("/plans/:id", isAuth, isSuper, PlanController.update);
-routes.delete("/plans/:id", isAuth, isSuper, PlanController.remove);
+routes.get("/plans", isAuth, PlanController.index);
+routes.post("/plans", isAuth, PlanController.store);
+routes.put("/plans/:id", isAuth, PlanController.update);
+routes.delete("/plans/:id", isAuth, PlanController.remove);
 
 // Rota Subscription (Stripe)
 routes.post("/subscription/create-checkout", isAuth, SubscriptionController.createCheckoutSession);

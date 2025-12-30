@@ -1,0 +1,48 @@
+import {
+  Table,
+  Column,
+  CreatedAt,
+  UpdatedAt,
+  Model,
+  PrimaryKey,
+  AutoIncrement,
+  ForeignKey,
+  BelongsTo
+} from "sequelize-typescript";
+import Chat from "./Chat";
+import User from "./User";
+
+@Table({
+  tableName: "ChatUsers",
+})
+class ChatUser extends Model<ChatUser> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @ForeignKey(() => Chat)
+  @Column
+  chatId!: number;
+
+  @BelongsTo(() => Chat)
+  chat!: Chat;
+
+  @ForeignKey(() => User)
+  @Column
+  userId!: number;
+
+  @BelongsTo(() => User)
+  user!: User;
+
+  @Column({ defaultValue: 0 })
+  unreads!: number;
+
+  @CreatedAt
+  createdAt!: Date;
+
+  @UpdatedAt
+  updatedAt!: Date;
+}
+
+export default ChatUser;

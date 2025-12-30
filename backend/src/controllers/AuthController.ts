@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import Company from "../models/Company";
-import Plan from "../models/Plan";
 import AppError from "../errors/AppError";
-// In production use: import { compare, hash } from "bcryptjs";
-// In production use: import { sign } from "jsonwebtoken";
+import { compare, hash } from "bcryptjs";
+import { sign } from "jsonwebtoken";
 
-// MOCK TOKEN GENERATOR
-const generateToken = (params = {}) => {
-  return "mock-jwt-token-" + Date.now();
+// Configuração do JWT (Idealmente via .env)
+const authConfig = {
+  secret: process.env.JWT_SECRET || "default_secret_nexzap",
+  expiresIn: "7d",
 };
 
 export const register = async (req: Request, res: Response): Promise<Response> => {
@@ -21,7 +21,6 @@ export const register = async (req: Request, res: Response): Promise<Response> =
   }
 
   // 2. Create Company (Tenant)
-  // Default to Plan 1 (Start) or Trial
   const company = await (Company as any).create({
     name: companyName,
     email: email,
@@ -32,18 +31,20 @@ export const register = async (req: Request, res: Response): Promise<Response> =
   });
 
   // 3. Create User (Admin)
-  // const passwordHash = await hash(password, 8);
-  const passwordHash = password; // Mock for dev
+  const passwordHash = await hash(password, 8);
 
   const user = await (User as any).create({
     name,
     email,
     passwordHash,
     profile: "admin",
-    companyId: company.id
+    companyId: company.id,
+    active: true
   });
 
-  const token = generateToken({ id: user.id });
+  const token = sign({ id: user.id, companyId: company.id } as object, authConfig.secret, {
+      expiresIn: authConfig.expiresIn
+  });
 
   return res.status(201).json({
     user,
@@ -57,21 +58,22 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 
   const user = await (User as any).findOne({
     where: { email },
-    include: [{ model: Company, as: "company" }] // Eager load company to check status
+    include: [{ model: Company, as: "company" }]
   });
 
   if (!user) {
     throw new AppError("Credenciais inválidas.", 401);
   }
 
-  // const checkPassword = await compare(password, user.passwordHash);
-  const checkPassword = password === user.passwordHash || user.passwordHash.startsWith("$2a"); // Allow mock hash match
+  const checkPassword = await compare(password, user.passwordHash);
 
   if (!checkPassword) {
     throw new AppError("Credenciais inválidas.", 401);
   }
 
-  const token = generateToken({ id: user.id });
+  const token = sign({ id: user.id, companyId: user.companyId } as object, authConfig.secret, {
+      expiresIn: authConfig.expiresIn
+  });
 
   return res.json({
     user,
@@ -80,6 +82,6 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 };
 
 export const refresh = async (req: Request, res: Response): Promise<Response> => {
-    // Mock refresh
-    return res.json({ token: generateToken() });
+    // Implement refresh token logic if needed
+    return res.json({ message: "Refresh not implemented yet" });
 }
