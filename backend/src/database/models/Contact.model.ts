@@ -1,31 +1,53 @@
 import {
-  Table,
+  AutoIncrement,
   Column,
-  Model,
+  CreatedAt,
   DataType,
-  ForeignKey,
-  BelongsTo,
+  Default,
+  HasMany,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import { Company } from "./Company.model";
+import { Ticket } from "./Ticket.model";
 
-@Table({ tableName: "contacts", timestamps: true })
-export class Contact extends Model {
-  @Column({ type: DataType.STRING, allowNull: false })
+@Table({
+  tableName: "Contacts",
+})
+class Contact extends Model<Contact> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @Column(DataType.STRING)
   name!: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column(DataType.STRING)
   number!: string;
 
-  @Column({ type: DataType.STRING })
+  @Column(DataType.STRING)
+  email!: string;
+
+  @Column(DataType.STRING)
   profilePicUrl!: string;
 
-  @Column({ defaultValue: false })
+  @Default(false)
+  @Column(DataType.BOOLEAN)
   isGroup!: boolean;
 
-  @ForeignKey(() => Company)
-  @Column
+  @Column(DataType.INTEGER)
   companyId!: number;
 
-  @BelongsTo(() => Company)
-  company!: Company;
+  @HasMany(() => Ticket)
+  tickets!: Ticket[];
+
+  @CreatedAt
+  createdAt!: Date;
+
+  @UpdatedAt
+  updatedAt!: Date;
 }
+
+export default Contact;

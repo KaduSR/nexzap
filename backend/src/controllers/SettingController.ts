@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import Setting from "../models/Setting";
+import { Response } from "express";
+import Setting from "../database/models/Setting";
 
 export const update = async (req: any, res: Response): Promise<Response> => {
   const { key } = req.params;
@@ -8,7 +8,7 @@ export const update = async (req: any, res: Response): Promise<Response> => {
   try {
     const [setting, created] = await (Setting as any).findOrCreate({
       where: { key },
-      defaults: { key, value }
+      defaults: { key, value },
     });
 
     if (!created) {
@@ -23,10 +23,10 @@ export const update = async (req: any, res: Response): Promise<Response> => {
 };
 
 export const index = async (req: any, res: Response): Promise<Response> => {
-    try {
-        const settings = await (Setting as any).findAll();
-        return res.json(settings);
-    } catch (err) {
-        return res.status(500).json({ error: "ERR_FETCHING_SETTINGS" });
-    }
-}
+  try {
+    const settings = await (Setting as any).findAll();
+    return res.json(settings);
+  } catch (err) {
+    return res.status(500).json({ error: "ERR_FETCHING_SETTINGS" });
+  }
+};

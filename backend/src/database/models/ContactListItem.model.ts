@@ -1,17 +1,17 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
+  DataType,
+  ForeignKey,
   Model,
   PrimaryKey,
-  AutoIncrement,
-  ForeignKey,
-  BelongsTo,
-  DataType
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import ContactList from "./ContactList";
-import Company from "./Company";
+import Company from "./Company.model";
+import ContactList from "./ContactList.model";
 
 @Table({
   tableName: "ContactListItems",

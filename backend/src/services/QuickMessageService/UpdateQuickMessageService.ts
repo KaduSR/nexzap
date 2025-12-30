@@ -1,5 +1,5 @@
+import QuickMessage from "../../database/models/QuickMessage";
 import ShowQuickMessageService from "./ShowQuickMessageService";
-import QuickMessage from "../../models/QuickMessage";
 
 interface Request {
   id: string | number;
@@ -15,7 +15,7 @@ const UpdateQuickMessageService = async ({
   shortcode,
   message,
   mediaPath,
-  mediaName
+  mediaName,
 }: Request): Promise<QuickMessage> => {
   const quickMessage = await ShowQuickMessageService(id);
 
@@ -23,7 +23,7 @@ const UpdateQuickMessageService = async ({
     shortcode,
     message,
     mediaPath: mediaPath ? mediaPath : quickMessage.mediaPath,
-    mediaName: mediaName ? mediaName : quickMessage.mediaName
+    mediaName: mediaName ? mediaName : quickMessage.mediaName,
   });
 
   return quickMessage;

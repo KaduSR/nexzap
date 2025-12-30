@@ -1,17 +1,17 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
-  PrimaryKey,
-  AutoIncrement,
   ForeignKey,
-  BelongsTo
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Queue from "./Queue";
-import Company from "./Company";
+import Company from "./Company.model";
+import { Queue } from "./Queue.model";
 
 @Table({
   tableName: "Prompts",

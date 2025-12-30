@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
-import User from "../models/User";
-import Company from "../models/Company";
-import AppError from "../errors/AppError";
 import { compare, hash } from "bcryptjs";
+import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
-import { Sign } from "crypto";
+import { Company } from "../database/models/Company.model";
+import { User } from "../database/models/User.model";
+import AppError from "../errors/AppError";
 
 // Configuração do JWT (Idealmente via .env)
 const authConfig = {

@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import QuickMessage from "../../models/QuickMessage";
+import QuickMessage from "../../database/models/QuickMessage";
 
 interface Request {
   companyId: number;
@@ -8,17 +8,14 @@ interface Request {
 
 const ListQuickMessageService = async ({
   companyId,
-  userId
+  userId,
 }: Request): Promise<QuickMessage[]> => {
   const quickMessages = await (QuickMessage as any).findAll({
     where: {
       companyId,
-      [Op.or]: [
-        { userId },
-        { userId: null }
-      ]
+      [Op.or]: [{ userId }, { userId: null }],
     },
-    order: [["shortcode", "ASC"]]
+    order: [["shortcode", "ASC"]],
   });
 
   return quickMessages;

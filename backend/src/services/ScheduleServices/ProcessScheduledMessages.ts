@@ -1,10 +1,10 @@
 import { Op } from "sequelize";
-import ScheduledMessage from "../../models/ScheduledMessage";
-import Ticket from "../../models/Ticket";
-import Contact from "../../models/Contact";
-import SendWhatsAppMessage from "../WbotServices/SendWhatsAppMessage";
-import { logger } from "../../utils/logger";
+import Contact from "../../database/models/Contact";
+import ScheduledMessage from "../../database/models/ScheduledMessage";
+import Ticket from "../../database/models/Ticket";
 import { getIO } from "../../libs/socket";
+import { logger } from "../../utils/logger";
+import SendWhatsAppMessage from "../WbotServices/SendWhatsAppMessage";
 
 export const ProcessScheduledMessages = async (): Promise<void> => {
   const now = new Date();
@@ -14,13 +14,10 @@ export const ProcessScheduledMessages = async (): Promise<void> => {
     where: {
       status: "PENDING",
       sendAt: {
-        [Op.lte]: now
-      }
+        [Op.lte]: now,
+      },
     },
-    include: [
-      { model: Ticket, include: [Contact] },
-      { model: Contact }
-    ]
+    include: [{ model: Ticket, include: [Contact] }, { model: Contact }],
   });
 
   if (schedules.length > 0) {
@@ -31,33 +28,34 @@ export const ProcessScheduledMessages = async (): Promise<void> => {
     let ticket = schedule.ticket;
 
     try {
-        // If ticket is closed, reopen it to bring attention
-        if (ticket && ticket.status === 'closed') {
-            await (ticket as any).update({ status: 'open', unreadMessages: 0 });
-        }
+      // If ticket is closed, reopen it to bring attention
+      if (ticket && ticket.status === "closed") {
+        await (ticket as any).update({ status: "open", unreadMessages: 0 });
+      }
 
-        // Send Message
-        await SendWhatsAppMessage({
-            body: schedule.body,
-            ticket: ticket,
-            quotedMsg: null as any
-        });
+      // Send Message
+      await SendWhatsAppMessage({
+        body: schedule.body,
+        ticket: ticket,
+        quotedMsg: null as any,
+      });
 
-        // Update Schedule Status
-        await (schedule as any).update({ status: "SENT" });
+      // Update Schedule Status
+      await (schedule as any).update({ status: "SENT" });
 
-        // Emit Socket to update frontend list immediately
-        const io = getIO();
-        io.emit(`scheduled-${schedule.companyId}`, {
-            action: "update",
-            schedule
-        });
+      // Emit Socket to update frontend list immediately
+      const io = getIO();
+      io.emit(`scheduled-${schedule.companyId}`, {
+        action: "update",
+        schedule,
+      });
 
-        logger.info(`[Scheduler] Message sent for ticket ${ticket.id}`);
-
+      logger.info(`[Scheduler] Message sent for ticket ${ticket.id}`);
     } catch (error) {
-        logger.error(`[Scheduler] Error sending message ID ${schedule.id}: ${error}`);
-        await (schedule as any).update({ status: "ERROR" });
+      logger.error(
+        `[Scheduler] Error sending message ID ${schedule.id}: ${error}`
+      );
+      await (schedule as any).update({ status: "ERROR" });
     }
   }
 };

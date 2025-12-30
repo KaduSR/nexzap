@@ -9,29 +9,22 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
-  Default
 } from "sequelize-typescript";
-import Contact from "./Contact";
+import { Contact } from "./Contact.model";
+import Campaign from "./Campaign.model";
 
-@Table({ tableName: "Invoices" })
-class Invoice extends Model<Invoice> {
+@Table({ tableName: "CampaignShipping" })
+class CampaignShipping extends Model<CampaignShipping> {
   @PrimaryKey
   @AutoIncrement
   @Column
   id!: number;
 
-  @Column(DataType.DECIMAL(10, 2))
-  value!: number;
-
-  @Column(DataType.DATEONLY)
-  dueDate!: string;
-
   @Column(DataType.DATE)
-  paidAt!: Date;
+  deliveredAt!: Date;
 
-  @Default("open")
-  @Column(DataType.STRING)
-  status!: string; // 'paid', 'open', 'overdue'
+  @Column(DataType.BOOLEAN)
+  confirmationRequested!: boolean; // Used as error/ack flag
 
   @ForeignKey(() => Contact)
   @Column
@@ -40,8 +33,12 @@ class Invoice extends Model<Invoice> {
   @BelongsTo(() => Contact)
   contact!: Contact;
 
+  @ForeignKey(() => Campaign)
   @Column
-  companyId!: number;
+  campaignId!: number;
+
+  @BelongsTo(() => Campaign)
+  campaign!: Campaign;
 
   @CreatedAt
   createdAt!: Date;
@@ -50,4 +47,4 @@ class Invoice extends Model<Invoice> {
   updatedAt!: Date;
 }
 
-export default Invoice;
+export default CampaignShipping;

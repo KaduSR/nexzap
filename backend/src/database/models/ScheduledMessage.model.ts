@@ -1,18 +1,18 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
-  PrimaryKey,
-  AutoIncrement,
+  Default,
   ForeignKey,
-  BelongsTo,
-  Default
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Ticket from "./Ticket";
-import Contact from "./Contact";
+import Contact from "./Contact.model";
+import { Ticket } from "./Ticket.model";
 
 @Table({
   tableName: "ScheduledMessages",

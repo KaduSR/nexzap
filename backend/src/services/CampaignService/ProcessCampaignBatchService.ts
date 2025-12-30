@@ -1,10 +1,9 @@
-
-import Campaign from "../../models/Campaign";
-import CampaignShipping from "../../models/CampaignShipping";
-import Contact from "../../models/Contact";
-import ProcessCampaignMessageService from "./ProcessCampaignMessageService";
-import { logger } from "../../utils/logger";
 import { Op } from "sequelize";
+import Campaign from "../../database/models/Campaign";
+import CampaignShipping from "../../database/models/CampaignShipping";
+import Contact from "../../database/models/Contact";
+import { logger } from "../../utils/logger";
+import ProcessCampaignMessageService from "./ProcessCampaignMessageService";
 
 export const ProcessCampaignBatchService = async (): Promise<void> => {
   // 1. Buscar Campanhas Ativas e Agendadas para AGORA ou ANTES
@@ -12,10 +11,10 @@ export const ProcessCampaignBatchService = async (): Promise<void> => {
     where: {
       status: "SCHEDULED", // Ou "PROCESSING"
       scheduledAt: {
-        [Op.lte]: new Date() // Agendado para agora ou passado
-      }
+        [Op.lte]: new Date(), // Agendado para agora ou passado
+      },
     },
-    include: [{ model: CampaignShipping, include: [Contact] }] // Incluir contactos
+    include: [{ model: CampaignShipping, include: [Contact] }], // Incluir contactos
   });
 
   if (campaigns.length === 0) return;
@@ -24,7 +23,6 @@ export const ProcessCampaignBatchService = async (): Promise<void> => {
 
   // 2. Processar cada campanha
   for (const campaign of campaigns) {
-    
     // Mudar status para PROCESSANDO para não ser pega por outro worker
     if (campaign.status === "SCHEDULED") {
       await campaign.update({ status: "PROCESSING" });
@@ -35,10 +33,10 @@ export const ProcessCampaignBatchService = async (): Promise<void> => {
       where: {
         campaignId: campaign.id,
         deliveredAt: null,
-        confirmationRequested: false // Supondo que false = pendente inicial
+        confirmationRequested: false, // Supondo que false = pendente inicial
       },
       include: [Contact],
-      limit: 10 // IMPORTANTE: Processar em pequenos lotes para não sobrecarregar
+      limit: 10, // IMPORTANTE: Processar em pequenos lotes para não sobrecarregar
     });
 
     if (pendingShippings.length === 0) {
@@ -51,7 +49,9 @@ export const ProcessCampaignBatchService = async (): Promise<void> => {
     // NÃO usar Promise.all aqui, pois queremos que os delays sejam sequenciais
     for (const shipping of pendingShippings) {
       // Verifica se a campanha não foi pausada/cancelada no meio do processo
-      const currentCampaignStatus = await (Campaign as any).findByPk(campaign.id);
+      const currentCampaignStatus = await (Campaign as any).findByPk(
+        campaign.id
+      );
       if (currentCampaignStatus?.status === "CANCELED") {
         logger.warn(`Campaign ${campaign.name} canceled manually.`);
         break;
@@ -59,7 +59,7 @@ export const ProcessCampaignBatchService = async (): Promise<void> => {
 
       await ProcessCampaignMessageService({
         campaign: campaign,
-        campaignShipping: shipping
+        campaignShipping: shipping,
       });
     }
   }

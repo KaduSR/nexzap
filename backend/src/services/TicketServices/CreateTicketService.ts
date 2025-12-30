@@ -1,9 +1,7 @@
-
-import Ticket from "../../models/Ticket";
-import User from "../../models/User";
-import UserQueue from "../../models/UserQueue";
-import AppError from "../../errors/AppError";
-import Contact from "../../models/Contact";
+import Contact from "../../database/models/Contact";
+import Ticket from "../../database/models/Ticket";
+import User from "../../database/models/User";
+import UserQueue from "../../database/models/UserQueue";
 
 interface Request {
   contactId: number;
@@ -18,12 +16,11 @@ const CreateTicketService = async ({
   status,
   userId,
   queueId,
-  whatsappId
+  whatsappId,
 }: Request): Promise<Ticket> => {
-  
   // 1. Verificar se já existe ticket aberto para este contato
   const ticketExists = await (Ticket as any).findOne({
-    where: { contactId, status: ["open", "pending"] }
+    where: { contactId, status: ["open", "pending"] },
   });
 
   if (ticketExists) {
@@ -34,21 +31,23 @@ const CreateTicketService = async ({
   let assignedUserId = userId;
 
   if (queueId && !userId) {
-     const userQueues = await (UserQueue as any).findAll({
-        where: { queueId }
-     });
+    const userQueues = await (UserQueue as any).findAll({
+      where: { queueId },
+    });
 
-     if (userQueues.length > 0) {
-        // Busca usuários disponíveis e conta quantos tickets cada um tem
-        // Esta é uma implementação simplificada. Em produção faria uma query COUNT.
-        const userIds = userQueues.map((uq: any) => uq.userId);
-        
-        // Sorteia um usuário (Simulação de Round Robin aleatório para simplificar)
-        // O ideal é buscar o usuário com menor numero de tickets 'open'
-        const randomIndex = Math.floor(Math.random() * userIds.length);
-        assignedUserId = userIds[randomIndex];
-        console.log(`[Round Robin] Ticket distribuído para User ID: ${assignedUserId}`);
-     }
+    if (userQueues.length > 0) {
+      // Busca usuários disponíveis e conta quantos tickets cada um tem
+      // Esta é uma implementação simplificada. Em produção faria uma query COUNT.
+      const userIds = userQueues.map((uq: any) => uq.userId);
+
+      // Sorteia um usuário (Simulação de Round Robin aleatório para simplificar)
+      // O ideal é buscar o usuário com menor numero de tickets 'open'
+      const randomIndex = Math.floor(Math.random() * userIds.length);
+      assignedUserId = userIds[randomIndex];
+      console.log(
+        `[Round Robin] Ticket distribuído para User ID: ${assignedUserId}`
+      );
+    }
   }
 
   // 3. Criar Ticket
@@ -59,12 +58,15 @@ const CreateTicketService = async ({
     whatsappId,
     queueId, // Salva a fila
     lastMessage: "",
-    unreadMessages: 0
+    unreadMessages: 0,
   });
 
   // Reload para trazer associações
   await ticket.reload({
-    include: [{ model: Contact, as: "contact" }, { model: User, as: "user" }]
+    include: [
+      { model: Contact, as: "contact" },
+      { model: User, as: "user" },
+    ],
   });
 
   return ticket;

@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import * as IxcService from "../services/IxcService";
-import Invoice from "../models/Invoice";
+import { Response } from "express";
+import Invoice from "../database/models/Invoice";
 import { getIO } from "../libs/socket";
+import * as IxcService from "../services/IxcService";
 
 export const index = async (req: any, res: any) => {
   const { status } = req.query; // active, blocked, or all
@@ -16,67 +16,77 @@ export const index = async (req: any, res: any) => {
 
 export const show = async (req: any, res: any) => {
   const { cpf } = req.params;
-  
+
   try {
-     const customer = await IxcService.getCustomerByCpf(cpf);
-     return res.json(customer);
+    const customer = await IxcService.getCustomerByCpf(cpf);
+    return res.json(customer);
   } catch (err) {
-     return res.status(500).json({ error: "Erro ao buscar cliente." });
+    return res.status(500).json({ error: "Erro ao buscar cliente." });
   }
 };
 
 export const getOsParams = async (req: any, res: any) => {
-    try {
-        const subjects = await IxcService.getOsSubjects();
-        const departments = await IxcService.getOsDepartments();
-        return res.json({ subjects, departments });
-    } catch (err) {
-        return res.status(500).json({ error: "Erro ao buscar parâmetros do IXC." });
-    }
+  try {
+    const subjects = await IxcService.getOsSubjects();
+    const departments = await IxcService.getOsDepartments();
+    return res.json({ subjects, departments });
+  } catch (err) {
+    return res.status(500).json({ error: "Erro ao buscar parâmetros do IXC." });
+  }
 };
 
 export const createOs = async (req: any, res: any) => {
-    const { subjectId, departmentId, priority, description, contractId, shift, address } = req.body;
+  const {
+    subjectId,
+    departmentId,
+    priority,
+    description,
+    contractId,
+    shift,
+    address,
+  } = req.body;
 
-    try {
-        const result = await IxcService.createServiceOrder({
-            subjectId,
-            departmentId,
-            priority,
-            description,
-            contractId,
-            shift,
-            address
-        });
-        return res.json(result);
-    } catch (err) {
-        return res.status(500).json({ error: "Erro ao criar O.S. no IXC." });
-    }
+  try {
+    const result = await IxcService.createServiceOrder({
+      subjectId,
+      departmentId,
+      priority,
+      description,
+      contractId,
+      shift,
+      address,
+    });
+    return res.json(result);
+  } catch (err) {
+    return res.status(500).json({ error: "Erro ao criar O.S. no IXC." });
+  }
 };
 
 export const webhookPayment = async (req: any, res: Response) => {
-    const { id_fatura, status, valor_pago } = req.body;
-    const companyId = 1; // Fixed for demo
+  const { id_fatura, status, valor_pago } = req.body;
+  const companyId = 1; // Fixed for demo
 
-    console.log("[Webhook] Received Payment Notification:", req.body);
+  console.log("[Webhook] Received Payment Notification:", req.body);
 
-    if (status === "Recebido" || status === "Pago") {
-        const invoice = await (Invoice as any).findOne({ where: { id: id_fatura } });
+  if (status === "Recebido" || status === "Pago") {
+    const invoice = await (Invoice as any).findOne({
+      where: { id: id_fatura },
+    });
 
-        if (invoice) {
-            await invoice.update({
-                status: "paid",
-                value: valor_pago,
-                paidAt: new Date()
-            });
+    if (invoice) {
+      await invoice.update({
+        status: "paid",
+        value: valor_pago,
+        paidAt: new Date(),
+      });
 
-            // Notify Frontend
-            getIO().emit(`company-${companyId}-payment`, {
-                action: "received",
-                invoice
-            });
-        }
+      // Notify Frontend
+      getIO().emit(`company-${companyId}-payment`, {
+        action: "received",
+        invoice,
+      });
     }
+  }
 
-    return res.status(200).send("OK");
+  return res.status(200).send("OK");
 };

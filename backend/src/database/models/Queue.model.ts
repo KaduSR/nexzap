@@ -1,13 +1,43 @@
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import {
+  AutoIncrement,
+  BelongsToMany,
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import { User } from "./User.model";
+import UserQueue from "./UserQueue.model";
 
-@Table({ tableName: "queues", timestamps: true })
-export class Queue extends Model {
-  @Column({ type: DataType.STRING, allowNull: false })
+@Table({
+  tableName: "Queues",
+})
+class Queue extends Model<Queue> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @Column(DataType.STRING)
   name!: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column(DataType.STRING)
   color!: string;
 
-  @Column({ type: DataType.TEXT })
+  @Column(DataType.STRING)
   greetingMessage!: string;
+
+  @BelongsToMany(() => User, () => UserQueue)
+  users!: User[];
+
+  @CreatedAt
+  createdAt!: Date;
+
+  @UpdatedAt
+  updatedAt!: Date;
 }
+
+export default Queue;

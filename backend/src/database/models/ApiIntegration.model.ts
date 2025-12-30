@@ -1,16 +1,16 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
-  PrimaryKey,
-  AutoIncrement,
   DataType,
   ForeignKey,
-  BelongsTo
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Company from "./Company";
+import { Company } from "./Company.model";
 
 @Table({
   tableName: "ApiIntegrations",

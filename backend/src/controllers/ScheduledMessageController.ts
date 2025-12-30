@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import ScheduledMessage from "../models/ScheduledMessage";
-import Ticket from "../models/Ticket";
+import { Response } from "express";
+import ScheduledMessage from "../database/models/ScheduledMessage";
+import Ticket from "../database/models/Ticket";
 
 export const store = async (req: any, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
@@ -9,7 +9,7 @@ export const store = async (req: any, res: Response): Promise<Response> => {
 
   const ticket = await (Ticket as any).findByPk(ticketId);
   if (!ticket) {
-      return res.status(404).json({ error: "Ticket not found" });
+    return res.status(404).json({ error: "Ticket not found" });
   }
 
   const schedule = await (ScheduledMessage as any).create({
@@ -18,30 +18,30 @@ export const store = async (req: any, res: Response): Promise<Response> => {
     ticketId,
     contactId: ticket.contactId,
     companyId,
-    status: 'PENDING'
+    status: "PENDING",
   });
 
   return res.json(schedule);
 };
 
 export const index = async (req: any, res: Response): Promise<Response> => {
-    const { ticketId } = req.params;
-    
-    const schedules = await (ScheduledMessage as any).findAll({
-        where: { ticketId, status: 'PENDING' },
-        order: [['sendAt', 'ASC']]
-    });
+  const { ticketId } = req.params;
 
-    return res.json(schedules);
+  const schedules = await (ScheduledMessage as any).findAll({
+    where: { ticketId, status: "PENDING" },
+    order: [["sendAt", "ASC"]],
+  });
+
+  return res.json(schedules);
 };
 
 export const remove = async (req: any, res: Response): Promise<Response> => {
-    const { scheduleId } = req.params;
-    
-    const schedule = await (ScheduledMessage as any).findByPk(scheduleId);
-    if (schedule) {
-        await (schedule as any).destroy();
-    }
+  const { scheduleId } = req.params;
 
-    return res.status(200).json({ message: "Schedule deleted" });
+  const schedule = await (ScheduledMessage as any).findByPk(scheduleId);
+  if (schedule) {
+    await (schedule as any).destroy();
+  }
+
+  return res.status(200).json({ message: "Schedule deleted" });
 };

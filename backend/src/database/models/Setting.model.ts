@@ -1,25 +1,29 @@
 import {
-  Table,
   Column,
-  Model,
+  CreatedAt,
   DataType,
-  ForeignKey,
-  BelongsTo,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import { Company } from "./Company.model";
 
-@Table({ tableName: "settings", timestamps: true })
-export class Setting extends Model {
-  @Column({ type: DataType.STRING, allowNull: false })
+@Table({
+  tableName: "Settings",
+})
+class Setting extends Model {
+  @PrimaryKey
+  @Column
   key!: string;
 
-  @Column({ type: DataType.TEXT, allowNull: false })
+  @Column(DataType.TEXT)
   value!: string;
 
-  @ForeignKey(() => Company)
-  @Column
-  companyId!: number;
+  @CreatedAt
+  createdAt!: Date;
 
-  @BelongsTo(() => Company)
-  company!: Company;
+  @UpdatedAt
+  updatedAt!: Date;
 }
+
+export default Setting;

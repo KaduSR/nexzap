@@ -1,4 +1,4 @@
-import Campaign from "../../models/Campaign";
+import Campaign from "../../database/models/Campaign";
 
 interface Request {
   name: string;
@@ -13,7 +13,7 @@ const CreateCampaignService = async ({
   message1,
   scheduledAt,
   companyId,
-  status
+  status,
 }: Request): Promise<Campaign> => {
   // Assume default whatsappId 1 for simplification in calendar creation
   const campaign = await (Campaign as any).create({
@@ -21,7 +21,7 @@ const CreateCampaignService = async ({
     message1,
     scheduledAt,
     status: status || "SCHEDULED",
-    whatsappId: 1 
+    whatsappId: 1,
   });
 
   return campaign;

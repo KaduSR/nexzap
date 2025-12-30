@@ -1,16 +1,16 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
+  ForeignKey,
   Model,
   PrimaryKey,
-  AutoIncrement,
-  ForeignKey,
-  BelongsTo
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Chat from "./Chat";
-import User from "./User";
+import Chat from "./Chat.model";
+import { User } from "./User.model";
 
 @Table({
   tableName: "ChatUsers",

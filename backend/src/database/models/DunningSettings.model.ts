@@ -1,13 +1,13 @@
 import {
-  Table,
+  AutoIncrement,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
+  Default,
+  Model,
   PrimaryKey,
-  AutoIncrement,
-  Default
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
 
 @Table({

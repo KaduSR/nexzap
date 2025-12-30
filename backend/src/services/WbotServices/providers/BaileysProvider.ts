@@ -1,20 +1,19 @@
-
-import { 
-    default as makeWASocket, 
-    DisconnectReason, 
-    fetchLatestBaileysVersion, 
-    makeCacheableSignalKeyStore, 
-    WASocket 
+import {
+  DisconnectReason,
+  fetchLatestBaileysVersion,
+  makeCacheableSignalKeyStore,
+  default as makeWASocket,
+  WASocket,
 } from "@whiskeysockets/baileys";
+import NodeCache from "node-cache";
 import pino from "pino";
-import Whatsapp from "../../../models/Whatsapp";
+import Whatsapp from "../../../database/models/Whatsapp";
+import { useMultiFileAuthStateDb } from "../../../helpers/useMultiFileAuthStateDb";
 import { getIO } from "../../../libs/socket";
 import { initWbot, removeWbot } from "../../../libs/wbot";
-import { useMultiFileAuthStateDb } from "../../../helpers/useMultiFileAuthStateDb";
-import { wbotMessageListener } from "../wbotMessageListener";
-import NodeCache from "node-cache";
-import { IWhatsappProvider } from "./IWhatsappProvider";
 import { StartWhatsAppSession } from "../StartWhatsAppSession";
+import { wbotMessageListener } from "../wbotMessageListener";
+import { IWhatsappProvider } from "./IWhatsappProvider";
 
 const msgRetryCounterCache = new NodeCache();
 
@@ -23,7 +22,7 @@ export class BaileysProvider implements IWhatsappProvider {
 
   public async init(): Promise<WASocket> {
     const { whatsapp } = this;
-    
+
     whatsapp.status = "OPENING";
     await (whatsapp as any).save();
 
@@ -38,8 +37,11 @@ export class BaileysProvider implements IWhatsappProvider {
       logger: pino({ level: "silent" }) as any,
       printQRInTerminal: false,
       auth: {
-          creds: state.creds,
-          keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" }))
+        creds: state.creds,
+        keys: makeCacheableSignalKeyStore(
+          state.keys,
+          pino({ level: "fatal" }).child({ level: "fatal" })
+        ),
       },
       browser: ["Whaticket Plus", "Chrome", "10.0"],
       msgRetryCounterCache,
@@ -53,16 +55,18 @@ export class BaileysProvider implements IWhatsappProvider {
       const { connection, lastDisconnect, qr } = update;
 
       if (qr) {
-          whatsapp.qrcode = qr;
-          whatsapp.status = "qrcode";
-          whatsapp.retries = 0;
-          await (whatsapp as any).save();
-          io.emit("whatsappSession", { action: "update", session: whatsapp });
+        whatsapp.qrcode = qr;
+        whatsapp.status = "qrcode";
+        whatsapp.retries = 0;
+        await (whatsapp as any).save();
+        io.emit("whatsappSession", { action: "update", session: whatsapp });
       }
 
       if (connection === "close") {
-        const shouldReconnect = (lastDisconnect?.error as any)?.output?.statusCode !== DisconnectReason.loggedOut;
-        
+        const shouldReconnect =
+          (lastDisconnect?.error as any)?.output?.statusCode !==
+          DisconnectReason.loggedOut;
+
         if (shouldReconnect) {
           // Reconnect logic: call the Service wrapper to re-instantiate provider
           StartWhatsAppSession(whatsapp);
@@ -88,7 +92,7 @@ export class BaileysProvider implements IWhatsappProvider {
     wbot.ev.on("creds.update", saveCreds);
 
     wbot.ev.on("messages.upsert", async (messageUpsert) => {
-        await wbotMessageListener(wbot as any, messageUpsert);
+      await wbotMessageListener(wbot as any, messageUpsert);
     });
 
     return wbot;

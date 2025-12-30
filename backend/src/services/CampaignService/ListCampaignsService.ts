@@ -1,8 +1,8 @@
-import Campaign from "../../models/Campaign";
+import Campaign from "../../database/models/Campaign";
 
 const ListCampaignsService = async (): Promise<Campaign[]> => {
   const campaigns = await (Campaign as any).findAll({
-    order: [["scheduledAt", "ASC"]]
+    order: [["scheduledAt", "ASC"]],
   });
   return campaigns;
 };

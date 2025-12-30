@@ -1,16 +1,16 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
-  PrimaryKey,
-  AutoIncrement,
   ForeignKey,
-  BelongsTo
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Whatsapp from "./Whatsapp";
+import { Whatsapp } from "./Whatsapp.model";
 
 @Table({
   tableName: "Baileys",

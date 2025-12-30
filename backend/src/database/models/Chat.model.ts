@@ -9,10 +9,10 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  HasMany
+  HasMany,
 } from "sequelize-typescript";
-import User from "./User";
-import Company from "./Company";
+import { User } from "./User.model";
+import { Company } from "./Company.model";
 
 @Table({
   tableName: "Chats",

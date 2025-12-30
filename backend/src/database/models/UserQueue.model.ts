@@ -1,14 +1,13 @@
-
 import {
   Table,
   Column,
   CreatedAt,
   UpdatedAt,
   Model,
-  ForeignKey
+  ForeignKey,
 } from "sequelize-typescript";
-import User from "./User";
-import Queue from "./Queue";
+import User from "./User.model";
+import Queue from "./Queue.model";
 
 @Table({
   tableName: "UserQueues",

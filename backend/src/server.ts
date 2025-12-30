@@ -1,11 +1,13 @@
 import app from "./app";
 import { runSeeds } from "./database/seeds/runSeeds";
 import { sequelize } from "./database/index";
+import { testConnection } from "./database/index";
 
 const PORT = process.env.PORT || 4000;
 
 async function startServer() {
   try {
+    await testConnection();
     await sequelize.sync({ force: true });
     console.log("✅ Banco de dados conectado!");
     await runSeeds();

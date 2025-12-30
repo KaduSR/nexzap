@@ -1,17 +1,17 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
-  PrimaryKey,
-  AutoIncrement,
   Default,
   ForeignKey,
-  BelongsTo
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Tag from "./Tag";
+import { Tag } from "./Tag.model";
 
 @Table({
   tableName: "Incidents",

@@ -8,10 +8,10 @@ import {
   PrimaryKey,
   AutoIncrement,
   ForeignKey,
-  BelongsTo
+  BelongsTo,
 } from "sequelize-typescript";
-import Chat from "./Chat";
-import User from "./User";
+import Chat from "./Chat.model";
+import { User } from "./User.model";
 
 @Table({
   tableName: "ChatMessages",

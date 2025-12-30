@@ -1,5 +1,5 @@
+import QuickMessage from "../../database/models/QuickMessage";
 import AppError from "../../errors/AppError";
-import QuickMessage from "../../models/QuickMessage";
 
 interface Request {
   shortcode: string;
@@ -16,14 +16,14 @@ const CreateQuickMessageService = async ({
   companyId,
   userId,
   mediaPath,
-  mediaName
+  mediaName,
 }: Request): Promise<QuickMessage> => {
   const shortcodeExists = await (QuickMessage as any).findOne({
     where: {
       shortcode,
       companyId,
-      userId
-    }
+      userId,
+    },
   });
 
   if (shortcodeExists) {
@@ -36,7 +36,7 @@ const CreateQuickMessageService = async ({
     companyId,
     userId,
     mediaPath,
-    mediaName
+    mediaName,
   });
 
   return quickMessage;

@@ -1,14 +1,13 @@
-
 import {
-  Table,
   Column,
   CreatedAt,
-  UpdatedAt,
+  ForeignKey,
   Model,
-  ForeignKey
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Ticket from "./Ticket";
-import Tag from "./Tag";
+import Tag from "./Tag.model";
+import Ticket from "./Ticket.model";
 
 @Table({
   tableName: "TicketTags",

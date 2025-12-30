@@ -1,6 +1,5 @@
-import Message from "../../models/Message";
-import Ticket from "../../models/Ticket";
-import Contact from "../../models/Contact";
+import Contact from "../../database/models/Contact";
+import Message from "../../database/models/Message";
 import UnifiedAiService from "./UnifiedAiService";
 
 interface AnalysisResult {
@@ -10,25 +9,27 @@ interface AnalysisResult {
   suggestion: string;
 }
 
-const AnalyzeTicketService = async (ticketId: number, companyId: number): Promise<AnalysisResult> => {
+const AnalyzeTicketService = async (
+  ticketId: number,
+  companyId: number
+): Promise<AnalysisResult> => {
   // 1. Fetch recent messages for context
   const messages = await (Message as any).findAll({
     where: { ticketId },
     order: [["createdAt", "DESC"]],
     limit: 20,
-    include: [
-      { model: Contact, as: "contact" }
-    ]
+    include: [{ model: Contact, as: "contact" }],
   });
 
   if (!messages || messages.length === 0) {
-      throw new Error("Não há mensagens suficientes para analisar.");
+    throw new Error("Não há mensagens suficientes para analisar.");
   }
 
   // Organize text chronologically
-  const history = messages.reverse().map((m: any) => 
-    `${m.fromMe ? "Atendente" : "Cliente"}: ${m.body}`
-  ).join("\n");
+  const history = messages
+    .reverse()
+    .map((m: any) => `${m.fromMe ? "Atendente" : "Cliente"}: ${m.body}`)
+    .join("\n");
 
   // 2. Construct Prompt
   const prompt = `
@@ -47,28 +48,30 @@ const AnalyzeTicketService = async (ticketId: number, companyId: number): Promis
 
   try {
     const aiResponseText = await UnifiedAiService({
-        companyId,
-        prompt,
-        history: "Você é um analista sênior de atendimento ao cliente."
+      companyId,
+      prompt,
+      history: "Você é um analista sênior de atendimento ao cliente.",
     });
 
     if (!aiResponseText) {
-        throw new Error("Sem resposta da IA.");
+      throw new Error("Sem resposta da IA.");
     }
-    
+
     // Clean markdown if present
-    const jsonString = aiResponseText.replace(/```json/g, "").replace(/```/g, "").trim();
-    
+    const jsonString = aiResponseText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
     const result: AnalysisResult = JSON.parse(jsonString);
     return result;
-
   } catch (error) {
     console.error("AI Analysis Error:", error);
     return {
       summary: "Não foi possível analisar a conversa no momento.",
       sentiment: "neutral",
       sentimentScore: 50,
-      suggestion: "Olá, como posso ajudar?"
+      suggestion: "Olá, como posso ajudar?",
     };
   }
 };

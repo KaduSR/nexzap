@@ -1,11 +1,32 @@
-import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
-import { Company } from "./Company.model";
+import {
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  HasMany,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import Company from "./Company.model";
 
-@Table({ tableName: "plans", timestamps: true })
-export class Plan extends Model {
-  @Column({ type: DataType.STRING, allowNull: false })
-  name!: string;
+@Table({
+  tableName: "Plans",
+})
+class Plan extends Model<Plan> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
 
+  @Column(DataType.STRING)
+  name!: string; // Start, Pro, Enterprise
+
+  @Column(DataType.STRING)
+  stripePriceId!: string; // Price ID from Stripe Dashboard
+
+  // Quantitative Limits (0 = Unlimited)
   @Column({ defaultValue: 0 })
   users!: number;
 
@@ -15,6 +36,7 @@ export class Plan extends Model {
   @Column({ defaultValue: 0 })
   queues!: number;
 
+  // Feature Flags
   @Column({ defaultValue: false })
   useCampaigns!: boolean;
 
@@ -37,11 +59,16 @@ export class Plan extends Model {
   useIntegrations!: boolean;
 
   @Column({ defaultValue: false })
-  useFieldService!: boolean;
-
-  @Column
-  stripePriceId!: string;
+  useFieldService!: boolean; // App do Técnico
 
   @HasMany(() => Company)
   companies!: Company[];
+
+  @CreatedAt
+  createdAt!: Date;
+
+  @UpdatedAt
+  updatedAt!: Date;
 }
+
+export default Plan;

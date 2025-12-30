@@ -1,4 +1,3 @@
-
 import {
   Table,
   Column,
@@ -10,10 +9,10 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
-  HasMany
+  HasMany,
 } from "sequelize-typescript";
-import Whatsapp from "./Whatsapp";
-import CampaignShipping from "./CampaignShipping";
+import { Whatsapp } from "./Whatsapp.model";
+import CampaignShipping from "./CampaignShipping.model";
 
 @Table({ tableName: "Campaigns" })
 class Campaign extends Model<Campaign> {

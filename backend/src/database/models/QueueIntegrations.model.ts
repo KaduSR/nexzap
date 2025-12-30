@@ -1,48 +1,43 @@
-
 import {
-  Table,
+  AutoIncrement,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
+  Model,
   PrimaryKey,
-  AutoIncrement,
-  Default,
-  HasMany
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Ticket from "./Ticket";
 
 @Table({
-  tableName: "Contacts",
+  tableName: "QueueIntegrations",
 })
-class Contact extends Model<Contact> {
+class QueueIntegrations extends Model<QueueIntegrations> {
   @PrimaryKey
   @AutoIncrement
   @Column
   id!: number;
 
   @Column(DataType.STRING)
+  type!: string;
+
+  @Column(DataType.STRING)
   name!: string;
 
   @Column(DataType.STRING)
-  number!: string;
+  projectName!: string;
+
+  @Column(DataType.TEXT)
+  jsonContent!: string;
 
   @Column(DataType.STRING)
-  email!: string;
+  urlN8N!: string;
 
-  @Column(DataType.STRING)
-  profilePicUrl!: string;
-
-  @Default(false)
-  @Column(DataType.BOOLEAN)
-  isGroup!: boolean;
+  @Column(DataType.INTEGER)
+  typebotDelayMessage!: number;
 
   @Column(DataType.INTEGER)
   companyId!: number;
-
-  @HasMany(() => Ticket)
-  tickets!: Ticket[];
 
   @CreatedAt
   createdAt!: Date;
@@ -51,4 +46,4 @@ class Contact extends Model<Contact> {
   updatedAt!: Date;
 }
 
-export default Contact;
+export default QueueIntegrations;

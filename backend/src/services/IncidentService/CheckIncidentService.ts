@@ -1,24 +1,24 @@
-import Incident from "../../models/Incident";
-import TicketTag from "../../models/TicketTag";
-import Ticket from "../../models/Ticket";
-import Contact from "../../models/Contact";
-import Tag from "../../models/Tag";
-// NOTE: Ideally, we should have a ContactTag model/table. 
+import Contact from "../../database/models/Contact";
+import Incident from "../../database/models/Incident";
+import Tag from "../../database/models/Tag";
+import Ticket from "../../database/models/Ticket";
+// NOTE: Ideally, we should have a ContactTag model/table.
 // Assuming for this architecture that we check tags via the LAST Ticket or a direct Contact-Tag relation if exists.
 // Implementing logic based on Contact -> Tickets -> Tags for simplicity in this schema.
 
-const CheckIncidentService = async (contact: Contact): Promise<Incident | null> => {
-  
+const CheckIncidentService = async (
+  contact: Contact
+): Promise<Incident | null> => {
   // 1. Find all Tags associated with this Contact (via recent tickets or direct association if implemented)
   // For this example, let's assume we fetch tags from the last closed ticket of this contact to know their "Region"
   const lastTicket = await (Ticket as any).findOne({
-      where: { contactId: contact.id },
-      include: [{ model: Tag, as: "tags" }],
-      order: [["createdAt", "DESC"]]
+    where: { contactId: contact.id },
+    include: [{ model: Tag, as: "tags" }],
+    order: [["createdAt", "DESC"]],
   });
 
   if (!lastTicket || !lastTicket.tags || lastTicket.tags.length === 0) {
-      return null;
+    return null;
   }
 
   const tagIds = lastTicket.tags.map((t: any) => t.id);
@@ -28,8 +28,8 @@ const CheckIncidentService = async (contact: Contact): Promise<Incident | null> 
     where: {
       isActive: true,
       tagId: tagIds,
-      companyId: contact.companyId
-    }
+      companyId: contact.companyId,
+    },
   });
 
   return incident;

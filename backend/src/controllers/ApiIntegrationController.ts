@@ -1,7 +1,3 @@
-
-import { Request, Response } from "express";
-import ApiIntegration from "../models/ApiIntegration";
-
 export const index = async (req: any, res: any) => {
   return res.json({ message: "Listando integrações..." });
 };

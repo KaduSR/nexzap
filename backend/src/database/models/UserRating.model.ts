@@ -8,10 +8,10 @@ import {
   PrimaryKey,
   AutoIncrement,
   ForeignKey,
-  BelongsTo
+  BelongsTo,
 } from "sequelize-typescript";
-import Ticket from "./Ticket";
-import User from "./User";
+import Ticket from "./Ticket.model";
+import User from "./User.model";
 
 @Table({
   tableName: "UserRatings",

@@ -1,27 +1,53 @@
 import {
+  AutoIncrement,
+  BelongsTo,
   Column,
+  CreatedAt,
   DataType,
+  Default,
   ForeignKey,
   Model,
+  PrimaryKey,
   Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import { Company } from "./Company.model";
+import Contact from "./Contact.model";
 
-@Table({ tableName: "invoices", timestamps: true })
-export class Invoice extends Model {
-  @Column({ type: DataType.DECIMAL(10, 2) })
+@Table({ tableName: "Invoices" })
+class Invoice extends Model<Invoice> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @Column(DataType.DECIMAL(10, 2))
   value!: number;
 
-  @Column
-  status!: string;
+  @Column(DataType.DATEONLY)
+  dueDate!: string;
 
-  @Column
+  @Column(DataType.DATE)
   paidAt!: Date;
 
-  @Column
-  dueDate!: Date;
+  @Default("open")
+  @Column(DataType.STRING)
+  status!: string; // 'paid', 'open', 'overdue'
 
-  @ForeignKey(() => Company)
+  @ForeignKey(() => Contact)
+  @Column
+  contactId!: number;
+
+  @BelongsTo(() => Contact)
+  contact!: Contact;
+
   @Column
   companyId!: number;
+
+  @CreatedAt
+  createdAt!: Date;
+
+  @UpdatedAt
+  updatedAt!: Date;
 }
+
+export default Invoice;

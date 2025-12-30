@@ -1,50 +1,64 @@
 import {
   Table,
   Column,
-  Model,
-  DataType,
   CreatedAt,
   UpdatedAt,
+  Model,
+  DataType,
+  PrimaryKey,
+  AutoIncrement,
+  Default,
+  BelongsToMany,
 } from "sequelize-typescript";
-import { Optional } from "sequelize";
-
-// Interface para definir atributos opcionais na criação (ex: ID é gerado auto)
-interface UserAttributes {
-  id: number;
-  name: string;
-  email: string;
-  password_hash: string;
-}
-
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+import Queue from "./Queue.model";
+import UserQueue from "./UserQueue.model";
 
 @Table({
-  tableName: "users", // Nome da tabela no banco
-  timestamps: true, // Cria created_at e updated_at
+  tableName: "Users",
 })
-export class User extends Model<UserAttributes, UserCreationAttributes> {
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
+class User extends Model<User> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @Column(DataType.STRING)
   name!: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    unique: true,
-  })
+  @Column(DataType.STRING)
   email!: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  password_hash!: string;
+  @Column(DataType.STRING)
+  passwordHash!: string;
+
+  @Default("admin")
+  @Column(DataType.STRING)
+  profile!: string;
+
+  @Column(DataType.STRING)
+  tokenVersion!: number;
+
+  @Default(true)
+  @Column(DataType.BOOLEAN)
+  active!: boolean;
+
+  // --- CORREÇÃO: Adicionado o campo SUPER ---
+  @Default(false)
+  @Column(DataType.BOOLEAN)
+  super!: boolean;
+  // ------------------------------------------
+
+  @Column(DataType.INTEGER)
+  companyId!: number;
+
+  @BelongsToMany(() => Queue, () => UserQueue)
+  queues!: Queue[];
 
   @CreatedAt
-  created_at!: Date;
+  createdAt!: Date;
 
   @UpdatedAt
-  updated_at!: Date;
+  updatedAt!: Date;
 }
+
+export default User;

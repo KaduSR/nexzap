@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import User from "../models/User";
+import { User } from "../database/models/User.model";
 
 const isSuper = async (
   req: any,
@@ -9,7 +9,7 @@ const isSuper = async (
   try {
     const { id } = req.user;
 
-    const user = await User.findByPk(id);
+    const user = await (User as any).findByPk(id);
 
     if (!user || !user.super) {
       return res.status(403).json({

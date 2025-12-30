@@ -7,7 +7,7 @@ import {
   DataType,
   PrimaryKey,
   AutoIncrement,
-  Default
+  Default,
 } from "sequelize-typescript";
 
 @Table({

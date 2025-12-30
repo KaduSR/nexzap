@@ -1,7 +1,9 @@
+import QuickMessage from "../../database/models/QuickMessage";
 import AppError from "../../errors/AppError";
-import QuickMessage from "../../models/QuickMessage";
 
-const ShowQuickMessageService = async (id: string | number): Promise<QuickMessage> => {
+const ShowQuickMessageService = async (
+  id: string | number
+): Promise<QuickMessage> => {
   const quickMessage = await (QuickMessage as any).findByPk(id);
 
   if (!quickMessage) {

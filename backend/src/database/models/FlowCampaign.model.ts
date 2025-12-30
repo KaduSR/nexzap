@@ -1,22 +1,19 @@
-
 import {
-  Table,
+  AutoIncrement,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
+  Default,
+  Model,
   PrimaryKey,
-  AutoIncrement,
-  BelongsToMany
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Ticket from "./Ticket";
-import TicketTag from "./TicketTag";
 
 @Table({
-  tableName: "Tags",
+  tableName: "FlowCampaigns",
 })
-class Tag extends Model<Tag> {
+class FlowCampaign extends Model<FlowCampaign> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -26,13 +23,14 @@ class Tag extends Model<Tag> {
   name!: string;
 
   @Column(DataType.STRING)
-  color!: string;
+  phrase!: string; // Trigger Keyword
 
+  @Default(true)
   @Column(DataType.BOOLEAN)
-  kanban!: boolean;
+  active!: boolean;
 
-  @BelongsToMany(() => Ticket, () => TicketTag)
-  tickets!: Ticket[];
+  @Column(DataType.JSON)
+  flow!: any; // JSON containing { nodes: [], edges: [] }
 
   @CreatedAt
   createdAt!: Date;
@@ -41,4 +39,4 @@ class Tag extends Model<Tag> {
   updatedAt!: Date;
 }
 
-export default Tag;
+export default FlowCampaign;

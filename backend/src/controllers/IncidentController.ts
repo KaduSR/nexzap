@@ -1,11 +1,14 @@
-import { Request, Response } from "express";
-import Incident from "../models/Incident";
-import Tag from "../models/Tag";
+import { Response } from "express";
+import Incident from "../database/models/Incident";
+import Tag from "../database/models/Tag";
 
 export const index = async (req: any, res: Response): Promise<Response> => {
   const incidents = await (Incident as any).findAll({
-      include: [{ model: Tag, as: "tag" }],
-      order: [['isActive', 'DESC'], ['createdAt', 'DESC']]
+    include: [{ model: Tag, as: "tag" }],
+    order: [
+      ["isActive", "DESC"],
+      ["createdAt", "DESC"],
+    ],
   });
   return res.json(incidents);
 };
@@ -19,7 +22,7 @@ export const store = async (req: any, res: Response): Promise<Response> => {
     description,
     tagId,
     companyId,
-    isActive: true
+    isActive: true,
   });
 
   return res.status(200).json(incident);
@@ -31,7 +34,7 @@ export const update = async (req: any, res: Response): Promise<Response> => {
 
   const incident = await (Incident as any).findByPk(id);
   if (!incident) {
-      return res.status(404).json({ error: "Incident not found" });
+    return res.status(404).json({ error: "Incident not found" });
   }
 
   await incident.update(data);
@@ -39,6 +42,6 @@ export const update = async (req: any, res: Response): Promise<Response> => {
 };
 
 export const listTags = async (req: any, res: Response): Promise<Response> => {
-    const tags = await (Tag as any).findAll();
-    return res.json(tags);
-}
+  const tags = await (Tag as any).findAll();
+  return res.json(tags);
+};

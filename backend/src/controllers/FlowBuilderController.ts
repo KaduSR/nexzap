@@ -1,5 +1,4 @@
-import { Request, Response } from "express";
-import FlowCampaign from "../models/FlowCampaign";
+import FlowCampaign from "../database/models/FlowCampaign";
 
 export const index = async (req: any, res: any) => {
   try {
@@ -21,10 +20,18 @@ export const save = async (req: any, res: any) => {
     if (flowCampaign) {
       await flowCampaign.update({ name, phrase, flow });
     } else {
-      flowCampaign = await (FlowCampaign as any).create({ id: 1, name, phrase, flow });
+      flowCampaign = await (FlowCampaign as any).create({
+        id: 1,
+        name,
+        phrase,
+        flow,
+      });
     }
 
-    return res.json({ message: "Fluxo salvo com sucesso!", flow: flowCampaign });
+    return res.json({
+      message: "Fluxo salvo com sucesso!",
+      flow: flowCampaign,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Erro ao salvar fluxo." });
@@ -35,26 +42,26 @@ export const getFlow = async (req: any, res: any) => {
   try {
     // Pega o fluxo padrão ID 1
     let flowCampaign = await (FlowCampaign as any).findByPk(1);
-    
+
     if (!flowCampaign) {
-        // Fallback: create default if missing
-        flowCampaign = await (FlowCampaign as any).create({
-            id: 1,
-            name: "Fluxo Principal",
-            phrase: "ola",
-            active: true,
-            flow: {
-                nodes: [
-                    { 
-                        id: 'node_1', 
-                        type: 'trigger', 
-                        label: 'Início do Fluxo', 
-                        data: { trigger: 'Qualquer Mensagem' },
-                        position: { x: 400, y: 50 }
-                    }
-                ]
-            }
-        });
+      // Fallback: create default if missing
+      flowCampaign = await (FlowCampaign as any).create({
+        id: 1,
+        name: "Fluxo Principal",
+        phrase: "ola",
+        active: true,
+        flow: {
+          nodes: [
+            {
+              id: "node_1",
+              type: "trigger",
+              label: "Início do Fluxo",
+              data: { trigger: "Qualquer Mensagem" },
+              position: { x: 400, y: 50 },
+            },
+          ],
+        },
+      });
     }
 
     return res.json(flowCampaign);
