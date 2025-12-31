@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-const API_URL = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Mock Columns (Poderiam vir da API 'tags' com kanban=true)
 const columns = [

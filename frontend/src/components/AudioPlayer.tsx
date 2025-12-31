@@ -3,7 +3,7 @@ import { AlertTriangle, Captions, Loader2, Pause, Play } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 
-const API_URL = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface AudioPlayerProps {
   src: string;

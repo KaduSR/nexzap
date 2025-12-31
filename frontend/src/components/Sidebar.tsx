@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   Banknote,
   Bot,
@@ -22,10 +23,11 @@ import {
   Users,
   Zap,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
-const API_URL = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface SidebarProps {
   isOpen: boolean;
@@ -33,6 +35,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, setOpen }) => {
+  const { handleLogout, user } = useContext(AuthContext);
   const [features, setFeatures] = useState<any>({
     useCampaigns: true,
     useIntegrations: true,
@@ -48,8 +51,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setOpen }) => {
 
   const fetchCompanyPlan = async () => {
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/companies/me`, {
-        headers: { Authorization: "Bearer token" },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const company = await res.json();
@@ -182,7 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setOpen }) => {
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-40
-          flex flex-col transition-all duration-300 ease-in-out bg-slate-900 border-r border-slate-800 overflow-hidden
+          flex flex-col transition-all duration-300 ease-in-out bg-slate-950 border-r border-slate-800/50 overflow-hidden
           ${
             isOpen
               ? "w-64 translate-x-0 shadow-2xl lg:shadow-none"
@@ -196,7 +200,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setOpen }) => {
               !isOpen && "lg:justify-center"
             }`}
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/20 shrink-0 relative overflow-hidden group">
+            <div className="w-10 h-10 bg-linear-to-br from-indigo-600 to-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/20 shrink-0 relative overflow-hidden group">
               <div className="absolute inset-0 bg-white/20 blur-xl group-hover:blur-md transition-all"></div>
               <Zap size={24} fill="currentColor" className="relative z-10" />
             </div>
@@ -205,7 +209,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setOpen }) => {
                 !isOpen && "lg:hidden"
               } whitespace-nowrap overflow-hidden transition-opacity duration-300`}
             >
-              <h1 className="font-black text-xl leading-tight text-white tracking-tight">
+              <h1 className="font-black leading-tight text-white tracking-tight">
                 Nex<span className="text-emerald-400">Zap</span>
               </h1>
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate">
@@ -247,7 +251,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setOpen }) => {
         <div className="p-3 border-t border-slate-800 space-y-2">
           <button
             onClick={() => setOpen(!isOpen)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors whitespace-nowrap lg:flex hidden"
+            className="w-ful hidden items-center gap-3 px-4 py-3 rounded-xl font-medium text-white hover:bg-slate-800 hover:text-blue transition-colors whitespace-nowrap lg:flex"
             title={isOpen ? "Recolher menu" : "Expandir menu"}
           >
             {isOpen ? (
@@ -281,6 +285,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setOpen }) => {
               </p>
             </div>
             <button
+              onClick={handleLogout}
               className={`text-slate-400 hover:text-red-400 transition-colors ${
                 !isOpen && "lg:hidden"
               }`}

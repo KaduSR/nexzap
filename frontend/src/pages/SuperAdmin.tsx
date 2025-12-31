@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   Building2,
   CalendarClock,
@@ -22,7 +23,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface Plan {
   id: number;
@@ -75,12 +76,13 @@ const SuperAdmin: React.FC = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
       const [compRes, planRes] = await Promise.all([
         fetch(`${API_URL}/api/companies`, {
-          headers: { Authorization: "Bearer token" },
+          headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${API_URL}/api/companies/plans`, {
-          headers: { Authorization: "Bearer token" },
+          headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
 
@@ -136,11 +138,12 @@ const SuperAdmin: React.FC = () => {
 
       const method = isEdit ? "PUT" : "POST";
 
+      const token = localStorage.getItem("token");
       const res = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer token",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       });
@@ -230,7 +233,7 @@ const SuperAdmin: React.FC = () => {
       </div>
 
       {/* List */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[24px] overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
@@ -334,7 +337,7 @@ const SuperAdmin: React.FC = () => {
       {/* Full Edit/Create Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-4xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600">

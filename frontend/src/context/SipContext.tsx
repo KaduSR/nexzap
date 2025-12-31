@@ -1,3 +1,4 @@
+// cspell: disable
 import React, {
   createContext,
   useContext,
@@ -7,7 +8,7 @@ import React, {
 } from "react";
 // In a real app, you would use: import { UserAgent, Registerer, Inviter, SessionState } from "sip.js";
 
-const API_URL = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export interface CallLog {
   id: string;
@@ -84,8 +85,9 @@ export const SipProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const checkSipCredentials = async () => {
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API_URL}/api/sip/settings`, {
-        headers: { Authorization: "Bearer token" },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const settings = await res.json();
       if (settings.sipServer && settings.username) {

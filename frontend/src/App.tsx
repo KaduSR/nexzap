@@ -1,3 +1,4 @@
+// cspell:disable
 import React, { useState, useEffect, useContext } from "react";
 import {
   HashRouter as Router,
@@ -36,7 +37,7 @@ import Webphone from "./components/Webphone";
 import { io } from "socket.io-client";
 
 // URL do Backend (ajuste conforme ambiente)
-const socketUrl = "http://localhost:4000";
+const socketUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -158,7 +159,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <Router>
         <Routes>
           <Route
             path="/login"

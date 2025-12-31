@@ -35,7 +35,7 @@ interface WorkflowNode {
   position: { x: number; y: number };
 }
 
-const API_URL = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Chatbot: React.FC = () => {
   const [isAddingNode, setIsAddingNode] = useState(false);

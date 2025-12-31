@@ -1,56 +1,41 @@
-import React, { useState, useEffect } from "react";
 import {
-  Search,
-  MoreVertical,
-  Send,
-  Paperclip,
-  Smile,
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRightLeft,
+  Calendar,
+  Check,
   CheckCheck,
-  User,
-  Phone,
-  Info,
-  Mic,
-  Image as ImageIcon,
-  MessageSquare,
+  Clock,
+  Copy,
   Database,
   FileText,
-  CreditCard,
-  History,
-  AlertTriangle,
-  Copy,
-  Check,
-  Plus,
-  X,
-  Wrench,
-  ChevronDown,
-  PhoneCall,
-  PhoneOff,
-  MicOff,
-  Delete,
-  Grid,
-  Zap,
-  Lock,
-  Unlock,
-  RefreshCw,
-  Loader2,
-  ArrowLeft,
   Filter,
-  MoreHorizontal,
+  Loader2,
+  Lock,
   LockOpen,
-  Clock,
-  Calendar,
+  MessageSquare,
+  Mic,
+  MoreVertical,
+  Phone,
+  RefreshCw,
+  Search,
+  Send,
+  Smile,
   Sparkles,
   Tag,
-  ArrowRightLeft,
+  Unlock,
+  Wrench,
+  X,
+  Zap,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import AudioPlayer from "../components/AudioPlayer";
-import TicketAiPanel from "../components/TicketAiPanel";
 import ServicePriceList from "../components/ServicePriceList";
+import TicketAiPanel from "../components/TicketAiPanel";
 import TransferTicketModal from "../components/TransferTicketModal"; // Import
 import { useSip } from "../context/SipContext";
-import { dotenv } from "dotenv";
 
-const API_URL = PROCESS.ENV;
+const API_URL = import.meta.env.VITE_API_URL;
 
 // --- Types ---
 interface Ticket {

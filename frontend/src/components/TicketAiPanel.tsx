@@ -16,7 +16,7 @@ interface TicketAiPanelProps {
   onClose?: () => void;
 }
 
-const API_URL = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const TicketAiPanel: React.FC<TicketAiPanelProps> = ({ ticketId, onClose }) => {
   const [loading, setLoading] = useState(false);
@@ -26,10 +26,11 @@ const TicketAiPanel: React.FC<TicketAiPanelProps> = ({ ticketId, onClose }) => {
   const handleAnalyze = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(
         `${API_URL}/api/tickets/${ticketId}/ai-analysis`,
         {
-          headers: { Authorization: "Bearer token" },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       if (res.ok) {

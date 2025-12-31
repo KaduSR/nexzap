@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   Ban,
   CheckCircle2,
@@ -26,8 +27,8 @@ import {
 } from "recharts";
 import { io } from "socket.io-client";
 
-const API_URL = process.env.VITE_API_URL;
-const socketUrl = process.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
+const socketUrl = import.meta.env.VITE_API_URL;
 
 const pieData = [
   { name: "Vendas", value: 400, color: "#6366f1" },
@@ -78,8 +79,10 @@ const Dashboard: React.FC = () => {
 
   const fetchFinancialData = async () => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await fetch(`${API_URL}/api/financial/dashboard`, {
-        headers: { Authorization: "Bearer token" },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         setFinancialData(await res.json());
@@ -192,7 +195,7 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Financial Chart */}
-        <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-[32px] border border-slate-800 shadow-xl relative overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-4xl border border-slate-800 shadow-xl relative overflow-hidden flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-lg md:text-xl font-bold mb-1 text-white">
@@ -205,7 +208,7 @@ const Dashboard: React.FC = () => {
             <MoreHorizontal className="text-slate-600 cursor-pointer" />
           </div>
 
-          <div className="h-[250px] md:h-[350px] w-full flex-1 min-h-0">
+          <div className="h-62.5 md:h-87.5 w-full flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={chartData}
@@ -263,7 +266,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Operational Stats (Existing) */}
-        <div className="bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-[32px] border border-slate-800 shadow-xl flex flex-col">
+        <div className="bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-4xl border border-slate-800 shadow-xl flex flex-col">
           <h2 className="text-lg md:text-xl font-bold mb-2 text-white">
             Operacional
           </h2>
@@ -271,7 +274,7 @@ const Dashboard: React.FC = () => {
             Tickets por Departamento
           </p>
 
-          <div className="h-[220px] md:h-[250px] w-full relative shrink-0">
+          <div className="h-55 md:h-62.5 w-full relative shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -382,7 +385,7 @@ const StatCard: React.FC<{
   const isPositive = trend.includes("+") || trend === "Est.";
   return (
     <div
-      className={`bg-gradient-to-br ${gradient} p-5 md:p-6 rounded-[24px] shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 min-w-0 flex flex-col justify-between`}
+      className={`bg-linear-to-br ${gradient} p-5 md:p-6 rounded-3xl shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 min-w-0 flex flex-col justify-between`}
     >
       {/* Background Shapes */}
       <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
