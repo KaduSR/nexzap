@@ -1,3 +1,4 @@
+// cspell: disable
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -36,14 +37,14 @@ const Signup: React.FC = () => {
       
       {/* Left Side - Marketing */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-slate-900">
-         <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900 to-blue-900 opacity-40"></div>
+         <div className="absolute inset-0 bg-linear-to-tr from-emerald-900 to-blue-900 opacity-40"></div>
          
-         <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
-         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500 rounded-full blur-[150px] opacity-20"></div>
+         <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [bg-size:20px_20px]"></div>
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-emerald-500 rounded-full blur-[150px] opacity-20"></div>
 
          <div className="relative z-10 flex flex-col justify-between p-16 w-full text-white">
             <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/30">
+                <div className="w-12 h-12 bg-linear-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/30">
                     <Zap size={28} fill="currentColor" />
                 </div>
                 <span className="font-black text-3xl tracking-tight">Nex<span className="text-emerald-400">Zap</span></span>
@@ -52,7 +53,7 @@ const Signup: React.FC = () => {
             <div className="space-y-8 max-w-lg">
                 <h1 className="text-5xl font-black leading-tight">
                     Comece seu teste <br/> 
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-blue-300">Grátis por 3 dias</span>
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-300 to-blue-300">Grátis por 3 dias</span>
                 </h1>
                 
                 <ul className="space-y-4">
@@ -80,7 +81,7 @@ const Signup: React.FC = () => {
             
             <div className="text-center lg:text-left mb-8">
                 <div className="lg:hidden flex justify-center mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <div className="w-12 h-12 bg-linear-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg">
                         <Zap size={24} fill="currentColor" />
                     </div>
                 </div>

@@ -1,3 +1,4 @@
+// cspell:disable
 import {
   AlertTriangle,
   Check,
@@ -84,7 +85,7 @@ const Subscription: React.FC = () => {
   return (
     <div className="p-8 space-y-10 max-w-7xl mx-auto animate-in fade-in duration-500">
       {status === "success" && (
-        <div className="bg-emerald-500/10 border border-emerald-500/30 p-6 rounded-[24px] text-center mb-8 animate-in zoom-in duration-300">
+        <div className="bg-emerald-500/10 border border-emerald-500/30 p-6 rounded-3xl text-center mb-8 animate-in zoom-in duration-300">
           <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg shadow-emerald-500/30">
             <Check size={32} strokeWidth={3} />
           </div>
@@ -172,7 +173,7 @@ const Subscription: React.FC = () => {
             return (
               <div
                 key={plan.id}
-                className={`relative flex flex-col p-8 rounded-[32px] border-2 transition-all duration-300 hover:-translate-y-2
+                className={`relative flex flex-col p-8 rounded-4xl border-2 transition-all duration-300 hover:-translate-y-2
                             ${
                               isPopular
                                 ? "bg-slate-900 border-indigo-500 shadow-2xl shadow-indigo-900/20 z-10 scale-105"

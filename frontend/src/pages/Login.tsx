@@ -1,3 +1,4 @@
+// cspell: disable
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
@@ -32,16 +33,16 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex bg-slate-950">
       {/* Left Side - Marketing / Branding */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-slate-900">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-emerald-900 opacity-40"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-blue-900 to-emerald-900 opacity-40"></div>
 
         {/* Background Patterns */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [bg-size:20px_20px]"></div>
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-600 rounded-full blur-[128px] opacity-20"></div>
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-emerald-600 rounded-full blur-[128px] opacity-20"></div>
 
         <div className="relative z-10 flex flex-col justify-between p-16 w-full text-white">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/30">
+            <div className="w-12 h-12 bg-linear-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/30">
               <Zap size={28} fill="currentColor" />
             </div>
             <span className="font-black text-3xl tracking-tight">
@@ -52,7 +53,7 @@ const Login: React.FC = () => {
           <div className="space-y-8 max-w-lg">
             <h1 className="text-5xl font-black leading-tight tracking-tight">
               O Sistema <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-emerald-400">
                 Operacional do Provedor
               </span>
             </h1>
@@ -110,7 +111,7 @@ const Login: React.FC = () => {
         <div className="w-full max-w-md space-y-8 animate-in slide-in-from-right-10 fade-in duration-500">
           <div className="text-center lg:text-left">
             <div className="lg:hidden flex justify-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg">
+              <div className="w-12 h-12 bg-linear-to-br from-blue-600 to-emerald-500 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg">
                 <Zap size={24} fill="currentColor" />
               </div>
             </div>

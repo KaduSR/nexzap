@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   AlertTriangle,
   ArrowLeft,
@@ -401,12 +402,12 @@ const Tickets: React.FC = () => {
   );
 
   return (
-    <div className="flex h-full bg-slate-50 dark:bg-slate-950 relative animate-in fade-in duration-300 overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden bg-slate-50 dark:bg-slate-900 animate-in fade-in duration-500">
       {/* Sidebar List */}
       <div
         className={`
         ${isMobile && selectedTicket ? "hidden" : "flex"}
-        w-full lg:w-[380px] border-r border-slate-200 dark:border-slate-800 flex-col bg-white dark:bg-slate-900 shrink-0
+        w-full lg:w-95 border-r border-slate-200 dark:border-slate-800 flex-col bg-white dark:bg-slate-900 shrink-0
       `}
       >
         {/* Sidebar Header */}
@@ -456,7 +457,7 @@ const Tickets: React.FC = () => {
         </div>
 
         {/* Chats List */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar px-3 pb-3 space-y-1">
+        <div className="w-full overflow-y-auto custom-scrollbar px-3 pb-3 space-y-1">
           {filteredTickets.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center opacity-50 p-8">
               <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
@@ -500,7 +501,7 @@ const Tickets: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="w-full min-w-0">
                   <div className="flex justify-between items-start mb-1">
                     <h3
                       className={`font-bold text-sm truncate ${
@@ -551,7 +552,7 @@ const Tickets: React.FC = () => {
       {/* Main Panel (Chat or Empty) */}
       <div
         className={`
-        flex-1 flex-col bg-slate-50 dark:bg-slate-900 relative
+        w-full flex-col bg-slate-50 dark:bg-slate-900 relative
         ${isMobile && !selectedTicket ? "hidden" : "flex"}
       `}
       >
@@ -715,7 +716,7 @@ const Tickets: React.FC = () => {
                         msg.isPrivate
                           ? "bg-amber-100 dark:bg-amber-900/30 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-700/50 rounded-br-none"
                           : msg.fromMe
-                          ? "bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-br-none shadow-indigo-500/20"
+                          ? "bg-linear-to-br from-indigo-600 to-blue-600 text-white rounded-br-none shadow-indigo-500/20"
                           : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-bl-none border border-slate-200 dark:border-slate-700"
                       }`}
                     >
@@ -758,7 +759,7 @@ const Tickets: React.FC = () => {
             >
               <div
                 className={`
-                  bg-white dark:bg-slate-900 rounded-[24px] p-2 flex items-end gap-2 shadow-xl shadow-slate-200/50 dark:shadow-black/20 border transition-all focus-within:ring-2 
+                  bg-white dark:bg-slate-900 rounded-3xl p-2 flex items-end gap-2 shadow-xl shadow-slate-200/50 dark:shadow-black/20 border transition-all focus-within:ring-2 
                   ${
                     isPrivateMode
                       ? "border-amber-400 dark:border-amber-600 ring-amber-200 bg-amber-50 dark:bg-amber-900/10"
@@ -862,7 +863,7 @@ const Tickets: React.FC = () => {
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-slate-400 space-y-6 animate-in zoom-in-95 duration-500">
-            <div className="w-32 h-32 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/10 dark:to-blue-900/10 rounded-[32px] flex items-center justify-center border-4 border-white dark:border-slate-800 shadow-2xl rotate-3">
+            <div className="w-32 h-32 bg-linear-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/10 dark:to-blue-900/10 rounded-4xl flex items-center justify-center border-4 border-white dark:border-slate-800 shadow-2xl rotate-3">
               <MessageSquare size={48} className="text-indigo-300" />
             </div>
             <div className="text-center space-y-2">
@@ -880,7 +881,7 @@ const Tickets: React.FC = () => {
       {/* SCHEDULE MODAL */}
       {isScheduleModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-4xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900">
               <h3 className="font-black text-lg flex items-center gap-2">
                 <Clock className="text-indigo-600" size={20} /> Agendar Mensagem
@@ -1158,7 +1159,7 @@ const Tickets: React.FC = () => {
       {/* OS MODAL */}
       {showOsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-4xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900">
               <h3 className="font-black text-lg flex items-center gap-2">
                 <Wrench className="text-indigo-600" size={20} /> Nova Ordem de
