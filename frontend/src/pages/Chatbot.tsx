@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   ArrowDown,
   ArrowRight,
@@ -286,8 +287,8 @@ const Chatbot: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="flex flex-col items-center gap-4">
+      <div className="h-full w-full flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="flex flex-col w-full items-center gap-4">
           <Loader2 size={40} className="animate-spin text-indigo-600" />
           <p className="text-slate-500 font-bold">Carregando Fluxo...</p>
         </div>
@@ -296,10 +297,10 @@ const Chatbot: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-slate-50 dark:bg-slate-950 select-none overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-slate-50 dark:bg-slate-950 select-none overflow-hidden">
       {/* Editor Header */}
       <header className="h-20 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-4 lg:px-8 z-30 shadow-sm shrink-0">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-10 w-full">
           <button
             onClick={() => setIsLibraryOpen(!isLibraryOpen)}
             className="lg:hidden p-2 -ml-2 text-slate-500"
@@ -373,7 +374,7 @@ const Chatbot: React.FC = () => {
                   <div
                     key={item.type}
                     onClick={() => addNode(item.type, item.label)}
-                    className="group flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[24px] cursor-pointer hover:border-indigo-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95"
+                    className="group flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-3xl cursor-pointer hover:border-indigo-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95"
                   >
                     <div
                       className={`w-12 h-12 ${item.color} text-white rounded-[18px] flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform`}
@@ -396,17 +397,17 @@ const Chatbot: React.FC = () => {
         </aside>
 
         {/* Visual Workflow Canvas */}
-        <main className="flex-1 relative bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px)] dark:bg-[radial-gradient(#1e293b_1.5px,transparent_1.5px)] [background-size:40px_40px] overflow-auto custom-scrollbar">
-          <div className="min-w-[800px] min-h-[1500px] p-8 md:p-24 flex flex-col items-center relative">
+        <main className="flex-1 relative bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px)] dark:bg-[radial-gradient(#1e293b_1.5px,transparent_1.5px)] bg-size-[40px_40px] overflow-auto custom-scrollbar">
+          <div className="min-w-200 min-h-375 p-8 md:p-24 flex flex-col items-center relative">
             {nodes.map((node, index) => (
               <React.Fragment key={node.id}>
                 <div
                   onClick={() => setSelectedNodeId(node.id)}
                   className={`
-                    w-96 bg-white dark:bg-slate-900 p-6 rounded-[32px] shadow-lg border-2 transition-all cursor-pointer relative group
+                    w-96 bg-white dark:bg-slate-900 p-6 rounded-4xl shadow-lg border-2 transition-all cursor-pointer relative group
                     ${
                       selectedNodeId === node.id
-                        ? "border-indigo-600 ring-[8px] ring-indigo-500/10 scale-105 z-10"
+                        ? "border-indigo-600 ring-8 ring-indigo-500/10 scale-105 z-10"
                         : "border-slate-100 dark:border-slate-800 hover:border-indigo-400"
                     }
                   `}
@@ -414,7 +415,7 @@ const Chatbot: React.FC = () => {
                   {/* Node Header */}
                   <div className="flex items-center gap-4 mb-4">
                     <div
-                      className={`w-10 h-10 rounded-[16px] text-white shadow-md flex items-center justify-center shrink-0 ${
+                      className={`w-10 h-10 rounded-2xl text-white shadow-md flex items-center justify-center shrink-0 ${
                         node.type === "message"
                           ? "bg-indigo-500"
                           : node.type === "trigger"
@@ -555,7 +556,7 @@ const Chatbot: React.FC = () => {
               ${
                 isMobile
                   ? "fixed inset-y-0 right-0 z-40 w-full max-w-md"
-                  : "relative w-[450px] shrink-0"
+                  : "relative w-112.5 shrink-0"
               }
               border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shadow-2xl 
               animate-in slide-in-from-right-full lg:slide-in-from-right-0 duration-300

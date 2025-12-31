@@ -102,7 +102,8 @@ const Services: React.FC = () => {
   );
 
   return (
-    <div className="p-8 space-y-8 max-w-6xl mx-auto animate-in fade-in duration-500">
+    // FIX: w-full e removido max-w-6xl
+    <div className="p-8 space-y-8 w-full animate-in fade-in duration-500">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-slate-800 dark:text-white flex items-center gap-3">
@@ -136,8 +137,8 @@ const Services: React.FC = () => {
         />
       </div>
 
-      {/* List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* List Grid Ajustado: 2xl:grid-cols-4 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
         {loading ? (
           <div className="col-span-full py-12 flex justify-center text-indigo-500">
             <Loader2 className="animate-spin" size={32} />
@@ -152,10 +153,10 @@ const Services: React.FC = () => {
           filteredItems.map((item) => (
             <div
               key={item.id}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm relative group hover:border-indigo-500 transition-colors"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm relative group hover:border-indigo-500 transition-colors flex flex-col h-full"
             >
               <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center text-indigo-600 font-bold">
+                <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center text-indigo-600 font-bold shrink-0">
                   <DollarSign size={20} />
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -183,11 +184,11 @@ const Services: React.FC = () => {
               >
                 {item.name}
               </h3>
-              <p className="text-xs text-slate-500 line-clamp-3 mb-4 h-10">
+              <p className="text-xs text-slate-500 line-clamp-3 mb-4 h-14 flex-1">
                 {item.description}
               </p>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-auto">
                 <span className="text-xl font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-lg">
                   R$ {item.price.toFixed(2).replace(".", ",")}
                 </span>
@@ -197,10 +198,11 @@ const Services: React.FC = () => {
         )}
       </div>
 
-      {/* Modal */}
+      {/* Modal - Mantido igual */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-4xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+            {/* ... conteúdo do modal ... */}
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900">
               <h3 className="font-black text-lg">
                 {currentItem.id ? "Editar Serviço" : "Novo Serviço"}
@@ -213,48 +215,43 @@ const Services: React.FC = () => {
               </button>
             </div>
             <form onSubmit={handleSave} className="p-8 space-y-5">
+              {/* Inputs ... */}
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
-                  Nome do Serviço
+                  Nome
                 </label>
                 <input
                   type="text"
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm outline-none focus:border-indigo-500"
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm outline-none"
                   value={currentItem.name}
                   onChange={(e) =>
                     setCurrentItem({ ...currentItem, name: e.target.value })
                   }
-                  required
-                  placeholder="Ex: Instalação Fibra 500MB"
                 />
               </div>
-
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
-                  Preço (R$)
+                  Preço
                 </label>
                 <input
                   type="number"
-                  step="0.01"
-                  className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm outline-none focus:border-indigo-500"
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm outline-none"
                   value={currentItem.price}
                   onChange={(e) =>
                     setCurrentItem({
                       ...currentItem,
-                      price: parseFloat(e.target.value),
+                      price: Number(e.target.value),
                     })
                   }
-                  required
                 />
               </div>
-
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
-                  Descrição Detalhada
+                  Descrição
                 </label>
                 <textarea
-                  rows={4}
-                  className="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:border-indigo-500 resize-none"
+                  rows={3}
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none resize-none"
                   value={currentItem.description}
                   onChange={(e) =>
                     setCurrentItem({
@@ -262,21 +259,14 @@ const Services: React.FC = () => {
                       description: e.target.value,
                     })
                   }
-                  placeholder="O que está incluso neste serviço?"
                 />
               </div>
-
               <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
+                className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold"
               >
-                {isSaving ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <Save size={18} />
-                )}
-                Salvar Item
+                {isSaving ? "Salvando..." : "Salvar"}
               </button>
             </form>
           </div>

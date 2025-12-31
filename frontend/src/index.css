@@ -20,11 +20,10 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  width: 100%;
   min-height: 100vh;
-  background-color: #020617; /* Garante fundo Slate-950 */
+  background-color: #020617; /* Mantém o Slate-950 */
+  overflow: hidden; /* evita barras desnecessárias */
 }
 
 /* Links e Botões */

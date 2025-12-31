@@ -402,12 +402,12 @@ const Tickets: React.FC = () => {
   );
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-slate-50 dark:bg-slate-900 animate-in fade-in duration-500">
+    <div className="w-full flex flex-1 h-screen overflow-hidden bg-slate-50 dark:bg-slate-900 animate-in fade-in duration-500">
       {/* Sidebar List */}
       <div
         className={`
         ${isMobile && selectedTicket ? "hidden" : "flex"}
-        w-full lg:w-95 border-r border-slate-200 dark:border-slate-800 flex-col bg-white dark:bg-slate-900 shrink-0
+        flex-1 lg:w-95 border-r border-slate-200 dark:border-slate-800 flex-col bg-white dark:bg-slate-900 shrink-0
       `}
       >
         {/* Sidebar Header */}
@@ -552,15 +552,15 @@ const Tickets: React.FC = () => {
       {/* Main Panel (Chat or Empty) */}
       <div
         className={`
-        w-full flex-col bg-slate-50 dark:bg-slate-900 relative
+        w-full flex-col bg-slate-50 dark:bg-slate-900
         ${isMobile && !selectedTicket ? "hidden" : "flex"}
       `}
       >
         {selectedTicket ? (
           <>
             {/* Chat Header */}
-            <header className="px-6 py-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 flex items-center justify-between z-20 sticky top-0">
-              <div className="flex items-center gap-4">
+            <header className="w-full px-6 py-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 flex items-center justify-between z-20 sticky top-0">
+              <div className="w-fullflex items-center gap-4">
                 {isMobile && (
                   <button
                     onClick={() => setSelectedTicket(null)}
@@ -675,7 +675,7 @@ const Tickets: React.FC = () => {
             </header>
 
             {/* Messages Area - Removed the Doodle BG */}
-            <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 custom-scrollbar bg-slate-50 dark:bg-slate-950">
+            <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 custom-scrollbar bg-slate-50 dark:bg-slate-950 w-full">
               <div className="flex justify-center my-4">
                 <span className="text-[10px] font-bold px-4 py-1.5 bg-slate-200 dark:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 uppercase tracking-widest shadow-sm border border-slate-300 dark:border-slate-700">
                   Hoje
