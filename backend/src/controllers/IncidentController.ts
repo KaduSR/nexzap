@@ -1,6 +1,6 @@
 import { Response } from "express";
-import Incident from "../database/models/Incident.model";
-import Tag from "../database/models/Tag.model";
+import { Incident } from "../database/models/Incident.model";
+import { Tag } from "../database/models/Tag.model";
 
 export const index = async (req: any, res: Response): Promise<Response> => {
   const incidents = await (Incident as any).findAll({

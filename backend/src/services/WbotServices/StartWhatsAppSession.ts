@@ -1,4 +1,4 @@
-import Whatsapp from "../../database/models/Whatsapp.model";
+import { Whatsapp } from "../../database/models/Whatsapp.model";
 import { BaileysProvider } from "./providers/BaileysProvider";
 
 export const StartWhatsAppSession = async (

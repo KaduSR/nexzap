@@ -1,5 +1,5 @@
 import { Response } from "express";
-import DunningSettings from "../database/models/DunningSettings.model";
+import { DunningSettings } from "../database/models/DunningSettings.model";
 import { ProcessDunningService } from "../services/FinanceServices/ProcessDunningService";
 
 export const index = async (req: any, res: Response): Promise<Response> => {

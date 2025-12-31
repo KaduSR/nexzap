@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Company from "../database/models/Company.model";
-import Plan from "../database/models/Plan.model";
-import User from "../database/models/User.model";
+import { Company } from "../database/models/Company.model";
+import { Plan } from "../database/models/Plan.model";
+import { User } from "../database/models/User.model";
 import AppError from "../errors/AppError";
 
 export const index = async (req: Request, res: Response): Promise<Response> => {

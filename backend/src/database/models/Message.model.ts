@@ -10,13 +10,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Contact from "./Contact.model";
-import Ticket from "./Ticket.model";
+import { Contact } from "./Contact.model";
+import { Ticket } from "./Ticket.model";
 
 @Table({
   tableName: "Messages",
 })
-class Message extends Model<Message> {
+export class Message extends Model<Message> {
   @PrimaryKey
   @Column
   id!: string;
@@ -67,5 +67,3 @@ class Message extends Model<Message> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Message;

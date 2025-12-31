@@ -10,12 +10,12 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Company from "./Company.model";
+import { Company } from "./Company.model";
 
 @Table({
   tableName: "ApiIntegrations",
 })
-class ApiIntegration extends Model<ApiIntegration> {
+export class ApiIntegration extends Model<ApiIntegration> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -58,5 +58,3 @@ class ApiIntegration extends Model<ApiIntegration> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default ApiIntegration;

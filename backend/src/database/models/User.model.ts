@@ -1,22 +1,25 @@
+// cspell:disable
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
+  BelongsToMany,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
-  PrimaryKey,
-  AutoIncrement,
   Default,
-  BelongsToMany,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Queue from "./Queue.model";
-import UserQueue from "./UserQueue.model";
+import { Company } from "./Company.model"; // Use chaves
+import { Queue } from "./Queue.model"; // Use chaves
+import { UserQueue } from "./UserQueue.model"; // Use chaves
 
-@Table({
-  tableName: "Users",
-})
-class User extends Model<User> {
+@Table({ tableName: "Users" })
+export class User extends Model {
+  // <--- ADICIONE 'export' AQUI
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -42,14 +45,16 @@ class User extends Model<User> {
   @Column(DataType.BOOLEAN)
   active!: boolean;
 
-  // --- CORREÇÃO: Adicionado o campo SUPER ---
   @Default(false)
   @Column(DataType.BOOLEAN)
   super!: boolean;
-  // ------------------------------------------
 
+  @ForeignKey(() => Company)
   @Column(DataType.INTEGER)
   companyId!: number;
+
+  @BelongsTo(() => Company)
+  Company!: Company;
 
   @BelongsToMany(() => Queue, () => UserQueue)
   queues!: Queue[];
@@ -60,5 +65,3 @@ class User extends Model<User> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default User;

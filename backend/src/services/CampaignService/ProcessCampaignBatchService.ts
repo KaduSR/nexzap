@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
-import Campaign from "../../database/models/Campaign.model";
-import CampaignShipping from "../../database/models/CampaignShipping.model";
-import Contact from "../../database/models/Contact.model";
+import { Campaign } from "../../database/models/Campaign.model";
+import { CampaignShipping } from "../../database/models/CampaignShipping.model";
+import { Contact } from "../../database/models/Contact.model";
 import { logger } from "../../utils/logger";
 import ProcessCampaignMessageService from "./ProcessCampaignMessageService";
 

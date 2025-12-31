@@ -11,7 +11,7 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Contact from "./Contact.model";
+import { Contact } from "./Contact.model";
 
 @Table({ tableName: "Invoices" })
 export class Invoice extends Model {
@@ -49,5 +49,3 @@ export class Invoice extends Model {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Invoice;

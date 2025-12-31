@@ -1,7 +1,7 @@
-import Contact from "../../database/models/Contact.model";
-import Incident from "../../database/models/Incident.model";
-import Tag from "../../database/models/Tag.model";
-import Ticket from "../../database/models/Ticket.model";
+import { Contact } from "../../database/models/Contact.model";
+import { Incident } from "../../database/models/Incident.model";
+import { Tag } from "../../database/models/Tag.model";
+import { Ticket } from "../../database/models/Ticket.model";
 // NOTE: Ideally, we should have a ContactTag model/table.
 // Assuming for this architecture that we check tags via the LAST Ticket or a direct Contact-Tag relation if exists.
 // Implementing logic based on Contact -> Tickets -> Tags for simplicity in this schema.

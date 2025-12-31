@@ -13,16 +13,16 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Contact from "./Contact.model";
-import Tag from "./Tag.model";
-import TicketTag from "./TicketTag.model";
-import User from "./User.model";
-import Whatsapp from "./Whatsapp.model";
+import { Contact } from "./Contact.model";
+import { Tag } from "./Tag.model";
+import { TicketTag } from "./TicketTag.model";
+import { User } from "./User.model";
+import { Whatsapp } from "./Whatsapp.model";
 
 @Table({
   tableName: "Tickets",
 })
-class Ticket extends Model<Ticket> {
+export class Ticket extends Model<Ticket> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -108,5 +108,3 @@ class Ticket extends Model<Ticket> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Ticket;

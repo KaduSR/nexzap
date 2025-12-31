@@ -9,13 +9,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Ticket from "./Ticket.model";
-import TicketTag from "./TicketTag.model";
+import { Ticket } from "./Ticket.model";
+import { TicketTag } from "./TicketTag.model";
 
 @Table({
   tableName: "Tags",
 })
-class Tag extends Model<Tag> {
+export class Tag extends Model<Tag> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -39,5 +39,3 @@ class Tag extends Model<Tag> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Tag;

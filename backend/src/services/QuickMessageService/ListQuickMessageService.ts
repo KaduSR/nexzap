@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import QuickMessage from "../../database/models/QuickMessage.model";
+import { QuickMessage } from "../../database/models/QuickMessage.model";
 
 interface Request {
   companyId: number;

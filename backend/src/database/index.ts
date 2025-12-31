@@ -1,6 +1,7 @@
+// cspell: disable
 // src/database/index.ts
-import { Sequelize } from "sequelize-typescript";
 import path from "path";
+import { Sequelize } from "sequelize-typescript";
 import * as models from "./models"; // Importa todos os exports do index.ts
 
 const dbPath = path.resolve(process.cwd(), "database.sqlite");

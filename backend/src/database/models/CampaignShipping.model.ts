@@ -10,11 +10,11 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Campaign from "./Campaign.model";
-import Contact from "./Contact.model";
+import { Campaign } from "./Campaign.model";
+import { Contact } from "./Contact.model";
 
 @Table({ tableName: "CampaignShipping" })
-class CampaignShipping extends Model<CampaignShipping> {
+export class CampaignShipping extends Model<CampaignShipping> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -46,5 +46,3 @@ class CampaignShipping extends Model<CampaignShipping> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default CampaignShipping;

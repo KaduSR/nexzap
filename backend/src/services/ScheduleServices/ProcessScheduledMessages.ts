@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
-import Contact from "../../database/models/Contact.model";
-import ScheduledMessage from "../../database/models/ScheduledMessage.model";
-import Ticket from "../../database/models/Ticket.model";
+import { Contact } from "../../database/models/Contact.model";
+import { ScheduledMessage } from "../../database/models/ScheduledMessage.model";
+import { Ticket } from "../../database/models/Ticket.model";
 import { getIO } from "../../libs/socket";
 import { logger } from "../../utils/logger";
 import SendWhatsAppMessage from "../WbotServices/SendWhatsAppMessage";

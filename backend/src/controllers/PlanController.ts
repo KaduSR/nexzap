@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Plan from "../database/models/Plan.model";
+import { Plan } from "../database/models/Plan.model";
 import AppError from "../errors/AppError";
 
 export const index = async (req: Request, res: Response): Promise<Response> => {

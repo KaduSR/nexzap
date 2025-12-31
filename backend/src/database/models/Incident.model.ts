@@ -11,12 +11,12 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Tag from "./Tag.model";
+import { Tag } from "./Tag.model";
 
 @Table({
   tableName: "Incidents",
 })
-class Incident extends Model<Incident> {
+export class Incident extends Model<Incident> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -48,5 +48,3 @@ class Incident extends Model<Incident> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Incident;

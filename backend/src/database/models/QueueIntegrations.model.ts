@@ -12,7 +12,7 @@ import {
 @Table({
   tableName: "QueueIntegrations",
 })
-class QueueIntegrations extends Model<QueueIntegrations> {
+export class QueueIntegrations extends Model<QueueIntegrations> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -45,5 +45,3 @@ class QueueIntegrations extends Model<QueueIntegrations> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default QueueIntegrations;

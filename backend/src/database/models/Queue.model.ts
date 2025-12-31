@@ -9,13 +9,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import User from "./User.model";
-import UserQueue from "./UserQueue.model";
+import { User } from "./User.model";
+import { UserQueue } from "./UserQueue.model";
 
 @Table({
   tableName: "Queues",
 })
-class Queue extends Model<Queue> {
+export class Queue extends Model<Queue> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -39,5 +39,3 @@ class Queue extends Model<Queue> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Queue;

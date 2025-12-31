@@ -13,7 +13,7 @@ import {
 @Table({
   tableName: "DunningSettings",
 })
-class DunningSettings extends Model<DunningSettings> {
+export class DunningSettings extends Model<DunningSettings> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -41,5 +41,3 @@ class DunningSettings extends Model<DunningSettings> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default DunningSettings;

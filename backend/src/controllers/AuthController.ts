@@ -1,14 +1,15 @@
 import { compare, hash } from "bcryptjs";
 import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
-import Company from "../database/models/Company.model";
-import User from "../database/models/User.model";
+// Certifique-se de que os imports estão usando Named Exports com { }
+import { Company } from "../database/models/Company.model";
+import { User } from "../database/models/User.model";
 import AppError from "../errors/AppError";
 
-// Configuração do JWT (Idealmente via .env)
+// Configuração do JWT
 const authConfig = {
   secret: process.env.JWT_SECRET || "default_secret_nexzap",
-  expiresIn: "7d" as string,
+  expiresIn: "7d",
 };
 
 export const register = async (
@@ -17,28 +18,23 @@ export const register = async (
 ): Promise<Response> => {
   const { companyName, name, email, password, phone } = req.body;
 
-  // 1. Check if user already exists
-  const userExists = await (User as any).findOne({ where: { email } });
+  const userExists = await User.findOne({ where: { email } });
   if (userExists) {
     throw new AppError("Email já cadastrado.");
   }
 
-  // 2. Create Company (Tenant)
-  const company = await (Company as any).create({
+  const company = await Company.create({
     name: companyName,
     email: email,
     phone: phone,
     planId: 1,
     status: true,
-    dueDate: new Date(new Date().setDate(new Date().getDate() + 3))
-      .toISOString()
-      .split("T")[0], // 3 Days Trial
+    dueDate: new Date(new Date().setDate(new Date().getDate() + 3)),
   });
 
-  // 3. Create User (Admin)
   const passwordHash = await hash(password, 8);
 
-  const user = await (User as any).create({
+  const user = await User.create({
     name,
     email,
     passwordHash,
@@ -48,7 +44,7 @@ export const register = async (
   });
 
   const token = sign(
-    { id: user.id, companyId: company.id } as object,
+    { id: user.id, companyId: company.id },
     authConfig.secret,
     { expiresIn: authConfig.expiresIn } as any
   );
@@ -63,9 +59,11 @@ export const register = async (
 export const login = async (req: Request, res: Response): Promise<Response> => {
   const { email, password } = req.body;
 
-  const user = await (User as any).findOne({
+  // 👇 CORREÇÃO AQUI: Removido 'as: "company"'
+  // O sequelize-typescript mapeia automaticamente para a propriedade 'company' do User
+  const user = await User.findOne({
     where: { email },
-    include: [{ model: Company, as: "company" }],
+    include: [Company],
   });
 
   if (!user) {
@@ -79,10 +77,10 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
   }
 
   const token = sign(
-    { id: user.id, companyId: user.companyId } as object,
+    { id: user.id, companyId: user.companyId },
     authConfig.secret,
     {
-      expiresIn: String(authConfig.expiresIn),
+      expiresIn: authConfig.expiresIn,
     } as any
   );
 
@@ -96,6 +94,5 @@ export const refresh = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  // Implement refresh token logic if needed
   return res.json({ message: "Refresh not implemented yet" });
 };

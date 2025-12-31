@@ -1,22 +1,22 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
-  Model,
   DataType,
-  PrimaryKey,
-  AutoIncrement,
   ForeignKey,
-  BelongsTo,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Ticket from "./Ticket.model";
-import User from "./User.model";
+import { Ticket } from "./Ticket.model";
+import { User } from "./User.model";
 
 @Table({
   tableName: "UserRatings",
 })
-class UserRating extends Model<UserRating> {
+export class UserRating extends Model<UserRating> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -48,5 +48,3 @@ class UserRating extends Model<UserRating> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default UserRating;

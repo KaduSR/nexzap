@@ -1,5 +1,5 @@
 import { Response } from "express";
-import Setting from "../database/models/Setting.model";
+import { Setting } from "../database/models/Setting.model";
 
 export const update = async (req: any, res: Response): Promise<Response> => {
   const { key } = req.params;

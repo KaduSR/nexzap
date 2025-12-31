@@ -1,5 +1,5 @@
 import { Op, col, fn } from "sequelize";
-import Invoice from "../../database/models/Invoice.model";
+import { Invoice } from "../../database/models/Invoice.model";
 
 interface FinancialData {
   todayRevenue: number;

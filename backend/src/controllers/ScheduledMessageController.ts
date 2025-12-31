@@ -1,6 +1,6 @@
 import { Response } from "express";
-import ScheduledMessage from "../database/models/ScheduledMessage.model";
-import Ticket from "../database/models/Ticket.model";
+import { ScheduledMessage } from "../database/models/ScheduledMessage.model";
+import { Ticket } from "../database/models/Ticket.model";
 
 export const store = async (req: any, res: Response): Promise<Response> => {
   const { ticketId } = req.params;

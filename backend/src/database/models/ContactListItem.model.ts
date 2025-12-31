@@ -10,13 +10,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Company from "./Company.model";
-import ContactList from "./ContactList.model";
+import { Company } from "./Company.model";
+import { ContactList } from "./ContactList.model";
 
 @Table({
   tableName: "ContactListItems",
 })
-class ContactListItem extends Model<ContactListItem> {
+export class ContactListItem extends Model<ContactListItem> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -54,5 +54,3 @@ class ContactListItem extends Model<ContactListItem> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default ContactListItem;

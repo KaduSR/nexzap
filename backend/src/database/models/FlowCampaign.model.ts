@@ -13,7 +13,7 @@ import {
 @Table({
   tableName: "FlowCampaigns",
 })
-class FlowCampaign extends Model<FlowCampaign> {
+export class FlowCampaign extends Model<FlowCampaign> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -38,5 +38,3 @@ class FlowCampaign extends Model<FlowCampaign> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default FlowCampaign;

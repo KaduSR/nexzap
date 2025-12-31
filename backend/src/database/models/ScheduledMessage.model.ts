@@ -11,13 +11,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Contact from "./Contact.model";
-import Ticket from "./Ticket.model";
+import { Contact } from "./Contact.model";
+import { Ticket } from "./Ticket.model";
 
 @Table({
   tableName: "ScheduledMessages",
 })
-class ScheduledMessage extends Model<ScheduledMessage> {
+export class ScheduledMessage extends Model<ScheduledMessage> {
   @PrimaryKey
   @AutoIncrement
   @Column

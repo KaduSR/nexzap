@@ -11,7 +11,7 @@ import {
 @Table({
   tableName: "Settings",
 })
-class Setting extends Model {
+export class Setting extends Model {
   @PrimaryKey
   @Column
   key!: string;
@@ -25,5 +25,3 @@ class Setting extends Model {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Setting;

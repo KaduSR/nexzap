@@ -1,5 +1,5 @@
 import { Response } from "express";
-import ServiceItem from "../database/models/ServiceItem.model";
+import { ServiceItem } from "../database/models/ServiceItem.model";
 
 export const index = async (req: any, res: Response): Promise<Response> => {
   const { companyId } = req.user;

@@ -9,24 +9,22 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Company from "./Company.model";
-
+import { Company } from "./Company.model";
 @Table({
   tableName: "Plans",
 })
-class Plan extends Model<Plan> {
+export class Plan extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column
   id!: number;
 
   @Column(DataType.STRING)
-  name!: string; // Start, Pro, Enterprise
+  name!: string;
 
   @Column(DataType.STRING)
-  stripePriceId!: string; // Price ID from Stripe Dashboard
+  stripePriceId!: string;
 
-  // Quantitative Limits (0 = Unlimited)
   @Column({ defaultValue: 0 })
   users!: number;
 
@@ -36,7 +34,6 @@ class Plan extends Model<Plan> {
   @Column({ defaultValue: 0 })
   queues!: number;
 
-  // Feature Flags
   @Column({ defaultValue: false })
   useCampaigns!: boolean;
 
@@ -59,7 +56,7 @@ class Plan extends Model<Plan> {
   useIntegrations!: boolean;
 
   @Column({ defaultValue: false })
-  useFieldService!: boolean; // App do Técnico
+  useFieldService!: boolean;
 
   @HasMany(() => Company)
   companies!: Company[];
@@ -70,5 +67,3 @@ class Plan extends Model<Plan> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Plan;

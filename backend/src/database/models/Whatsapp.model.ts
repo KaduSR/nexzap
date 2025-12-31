@@ -13,7 +13,7 @@ import {
 @Table({
   tableName: "Whatsapps",
 })
-class Whatsapp extends Model<Whatsapp> {
+export class Whatsapp extends Model<Whatsapp> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -50,5 +50,3 @@ class Whatsapp extends Model<Whatsapp> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Whatsapp;

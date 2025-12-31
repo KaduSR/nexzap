@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import fs from "fs";
-import Setting from "../../database/models/Setting.model";
+import { Setting } from "../../database/models/Setting.model";
 import AppError from "../../errors/AppError";
 import { logger } from "../../utils/logger";
 // Fix: Import Buffer explicitely to avoid type errors

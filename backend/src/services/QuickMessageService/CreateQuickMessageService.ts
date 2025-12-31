@@ -1,4 +1,4 @@
-import QuickMessage from "../../database/models/QuickMessage.model";
+import { QuickMessage } from "../../database/models/QuickMessage.model";
 import AppError from "../../errors/AppError";
 
 interface Request {

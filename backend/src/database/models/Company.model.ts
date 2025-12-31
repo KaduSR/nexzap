@@ -1,3 +1,4 @@
+// cspell:disable
 import {
   AutoIncrement,
   BelongsTo,
@@ -12,14 +13,14 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Contact from "./Contact.model";
-import Plan from "./Plan.model";
-import User from "./User.model";
+import { Contact } from "./Contact.model";
+import { Plan } from "./Plan.model";
+import { User } from "./User.model";
 
 @Table({
   tableName: "Companies",
 })
-class Company extends Model<Company> {
+export class Company extends Model<Company> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -70,6 +71,10 @@ class Company extends Model<Company> {
   @Column
   planId!: number;
 
+  @ForeignKey(() => User)
+  @Column
+  userId!: number;
+
   @BelongsTo(() => Plan)
   plan!: Plan;
 
@@ -85,5 +90,3 @@ class Company extends Model<Company> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Company;

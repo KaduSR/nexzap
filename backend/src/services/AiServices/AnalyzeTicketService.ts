@@ -1,5 +1,5 @@
-import Contact from "../../database/models/Contact.model";
-import Message from "../../database/models/Message.model";
+import { Contact } from "../../database/models/Contact.model";
+import { Message } from "../../database/models/Message.model";
 import UnifiedAiService from "./UnifiedAiService";
 
 interface AnalysisResult {

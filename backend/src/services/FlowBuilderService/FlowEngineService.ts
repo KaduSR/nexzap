@@ -1,5 +1,5 @@
-import FlowCampaign from "../../database/models/FlowCampaign.model";
-import Ticket from "../../database/models/Ticket.model";
+import { FlowCampaign } from "../../database/models/FlowCampaign.model";
+import { Ticket } from "../../database/models/Ticket.model";
 import { logger } from "../../utils/logger";
 
 interface Node {

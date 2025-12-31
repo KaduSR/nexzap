@@ -6,13 +6,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Tag from "./Tag.model";
-import Ticket from "./Ticket.model";
+import { Tag } from "./Tag.model";
+import { Ticket } from "./Ticket.model";
 
 @Table({
   tableName: "TicketTags",
 })
-class TicketTag extends Model<TicketTag> {
+export class TicketTag extends Model<TicketTag> {
   @ForeignKey(() => Ticket)
   @Column
   ticketId!: number;
@@ -27,5 +27,3 @@ class TicketTag extends Model<TicketTag> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default TicketTag;

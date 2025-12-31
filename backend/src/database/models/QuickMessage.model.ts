@@ -10,12 +10,12 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import User from "./User.model";
+import { User } from "./User.model";
 
 @Table({
   tableName: "QuickMessages",
 })
-class QuickMessage extends Model<QuickMessage> {
+export class QuickMessage extends Model<QuickMessage> {
   @PrimaryKey
   @AutoIncrement
   @Column

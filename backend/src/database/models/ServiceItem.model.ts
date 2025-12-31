@@ -12,7 +12,7 @@ import {
 @Table({
   tableName: "ServiceItems",
 })
-class ServiceItem extends Model<ServiceItem> {
+export class ServiceItem extends Model<ServiceItem> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -36,5 +36,3 @@ class ServiceItem extends Model<ServiceItem> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default ServiceItem;

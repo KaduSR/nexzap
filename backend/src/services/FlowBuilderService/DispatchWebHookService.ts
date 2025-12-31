@@ -1,6 +1,6 @@
-import Contact from "../../database/models/Contact.model";
-import Setting from "../../database/models/Setting.model";
-import Ticket from "../../database/models/Ticket.model";
+import { Contact } from "../../database/models/Contact.model";
+import { Setting } from "../../database/models/Setting.model";
+import { Ticket } from "../../database/models/Ticket.model";
 import { getWbot } from "../../libs/wbot";
 import { logger } from "../../utils/logger";
 import IxcClient from "../IxcService/IxcClient";

@@ -1,7 +1,7 @@
-import Contact from "../../database/models/Contact.model";
-import Ticket from "../../database/models/Ticket.model";
-import User from "../../database/models/User.model";
-import UserQueue from "../../database/models/UserQueue.model";
+import { Contact } from "../../database/models/Contact.model";
+import { Ticket } from "../../database/models/Ticket.model";
+import { User } from "../../database/models/User.model";
+import { UserQueue } from "../../database/models/UserQueue.model";
 
 interface Request {
   contactId: number;

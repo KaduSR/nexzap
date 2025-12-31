@@ -10,13 +10,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Company from "./Company.model";
-import Queue from "./Queue.model";
+import { Company } from "./Company.model";
+import { Queue } from "./Queue.model";
 
 @Table({
   tableName: "Prompts",
 })
-class Prompt extends Model<Prompt> {
+export class Prompt extends Model<Prompt> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -72,5 +72,3 @@ class Prompt extends Model<Prompt> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Prompt;

@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import Setting from "../database/models/Setting.model";
+import { Setting } from "../database/models/Setting.model";
 
 const isOutsideBusinessHours = async (): Promise<boolean> => {
   const settings = await (Setting as any).findAll({

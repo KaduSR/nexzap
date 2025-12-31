@@ -10,13 +10,13 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Company from "./Company.model";
-import User from "./User.model";
+import { Company } from "./Company.model";
+import { User } from "./User.model";
 
 @Table({
   tableName: "Chats",
 })
-class Chat extends Model<Chat> {
+export class Chat extends Model<Chat> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -51,5 +51,3 @@ class Chat extends Model<Chat> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Chat;

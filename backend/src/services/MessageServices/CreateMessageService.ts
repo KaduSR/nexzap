@@ -1,5 +1,5 @@
-import Message from "../../database/models/Message.model";
-import Ticket from "../../database/models/Ticket.model";
+import { Message } from "../../database/models/Message.model";
+import { Ticket } from "../../database/models/Ticket.model";
 import { getIO } from "../../libs/socket";
 import { getWbot } from "../../libs/wbot";
 

@@ -1,4 +1,4 @@
-import FlowCampaign from "../database/models/FlowCampaign.model";
+import { FlowCampaign } from "../database/models/FlowCampaign.model";
 
 export const index = async (req: any, res: any) => {
   try {

@@ -1,11 +1,14 @@
+// cSpell:disable
 import { Sequelize } from "sequelize-typescript";
-import Company from "./models/Company.model";
-import User from "./models/User.model";
+
+import { Company } from "./models/Company.model";
+import { Contact } from "./models/Contact.model";
+import { User } from "./models/User.model";
 
 export const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: "./src/database/database.sqlite",
-  models: [Company, User],
+  models: [Company, User, Contact],
   logging: false,
 });
 

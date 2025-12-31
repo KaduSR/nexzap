@@ -1,23 +1,23 @@
 import {
-  Table,
+  AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
-  UpdatedAt,
+  DataType,
+  ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
-  AutoIncrement,
-  ForeignKey,
-  BelongsTo,
-  HasMany,
-  DataType,
+  Table,
+  UpdatedAt,
 } from "sequelize-typescript";
-import Company from "./Company.model";
-import ContactListItem from "./ContactListItem.model";
+import { Company } from "./Company.model";
+import { ContactListItem } from "./ContactListItem.model";
 
 @Table({
   tableName: "ContactLists",
 })
-class ContactList extends Model<ContactList> {
+export class ContactList extends Model<ContactList> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -42,5 +42,3 @@ class ContactList extends Model<ContactList> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default ContactList;

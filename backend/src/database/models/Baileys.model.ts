@@ -10,12 +10,12 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
-import Whatsapp from "./Whatsapp.model";
+import { Whatsapp } from "./Whatsapp.model";
 
 @Table({
   tableName: "Baileys",
 })
-class Baileys extends Model<Baileys> {
+export class Baileys extends Model<Baileys> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -40,5 +40,3 @@ class Baileys extends Model<Baileys> {
   @UpdatedAt
   updatedAt!: Date;
 }
-
-export default Baileys;
