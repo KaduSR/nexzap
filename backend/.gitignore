@@ -1,0 +1,9 @@
+node_modules/
+.env
+dist/
+build/
+instances.json
+brands/
+certificates/
+Gemini/
+database.sqlite
