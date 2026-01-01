@@ -11,8 +11,15 @@ import {
   X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { url } from "node:inspector";
 
-// Interfaces mockadas
+const API_URL = import.meta.env.VITE_API_URL;
+interface UserType {
+  id: number;
+  name: string;
+  profile: string;
+}
 interface Queue {
   id: number;
   name: string;
@@ -28,27 +35,68 @@ const Queues: React.FC = () => {
   const [currentQueue, setCurrentQueue] = useState<Partial<Queue>>({
     name: "",
     color: "#6366f1",
+    greetingMessage: "",
   });
 
+  const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setQueues([
-        {
-          id: 1,
-          name: "Financeiro",
-          color: "#10b981",
-          greetingMessage: "Olá",
-          users: [],
-        },
-      ]);
-      setLoading(false);
-    }, 500);
+    fetchaData();
   }, []);
 
-  const handleOpenModal = (q?: Queue) => {
-    setShowModal(true);
-    setCurrentQueue(q || { name: "", color: "#6366f1" });
+  const fetchaData = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const Headers = { Authorization: `Bearer ${token}` };
+
+      const [queueRes, usersRes] = await Promise.all([
+        fetchaData(`${API_URL}/queues`, { Headers }),
+        fetchaData(`${API_URL}/users`, { Headers }),
+      ]);
+
+      if (queueRes.ok) setQueues(await queueRes.json());
+      if (usersRes) {
+        const usersData = await usersRes.json();
+        setAvailableUsers(
+          Array.isArray(usersData) ? usersData : usersData.users || []
+        );
+      }
+    } catch (e) {
+      console.error("Error fetching data", e);
+      console.error("Error ao carregar setores.");
+    } finally {
+      setLoading(false);
+    }
+
+    const handleOpenModal = (queue?: Queue) => {
+      if (queue) {
+        setCurrentQueue(queue);
+        setSelectedUserIds(queue.users?.map((u) => u.id) || []);
+      } else {
+        setCurrentQueue({ name: "", color: "#6366f1", greetingMessage: "" });
+        setSelectedUserIds([]);
+      }
+      setShowModal(true);
+    };
+
+    const handleSave = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSaving(true);
+      try {
+        const token = localStorage.getItem("token");
+        const method = currentQueue.id ? "PUT": "POST";
+        const url = currentQueue.id ? `${API_URL/queues/${currentQueue.id}}` : `${API_URL}/queues`;
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            
+          }
+        })
+      }
+    }
   };
 
   return (
