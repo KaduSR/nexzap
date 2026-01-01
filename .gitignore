@@ -6,3 +6,4 @@ instances.json
 brands/
 certificates/
 Gemini/
+database.sqlite
