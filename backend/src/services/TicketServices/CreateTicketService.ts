@@ -1,3 +1,4 @@
+// cspell: disable
 import { Contact } from "../../database/models/Contact.model";
 import { Ticket } from "../../database/models/Ticket.model";
 import { User } from "../../database/models/User.model";
@@ -8,7 +9,7 @@ interface Request {
   status: string;
   userId?: number;
   queueId?: number;
-  whatsappId: number;
+  companyId: number;
 }
 
 const CreateTicketService = async ({
@@ -16,7 +17,7 @@ const CreateTicketService = async ({
   status,
   userId,
   queueId,
-  whatsappId,
+  companyId,
 }: Request): Promise<Ticket> => {
   // 1. Verificar se já existe ticket aberto para este contato
   const ticketExists = await (Ticket as any).findOne({
@@ -55,7 +56,7 @@ const CreateTicketService = async ({
     contactId,
     status,
     userId: assignedUserId,
-    whatsappId,
+    companyId,
     queueId, // Salva a fila
     lastMessage: "",
     unreadMessages: 0,

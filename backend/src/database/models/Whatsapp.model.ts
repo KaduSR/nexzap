@@ -1,3 +1,4 @@
+// cspell:disable
 import {
   Table,
   Column,
@@ -8,45 +9,75 @@ import {
   PrimaryKey,
   AutoIncrement,
   Default,
+  AllowNull,
+  HasMany,
+  Unique,
+  ForeignKey,
+  BelongsTo,
+  BelongsToMany,
 } from "sequelize-typescript";
+import { Queue } from "./Queue.model";
+import { User } from "./User.model";
+import { Company } from "./Company.model"; // <--- Importar Company
 
-@Table({
-  tableName: "Whatsapps",
-})
+@Table
 export class Whatsapp extends Model<Whatsapp> {
   @PrimaryKey
   @AutoIncrement
   @Column
-  id!: number;
+  id: number;
 
-  @Column(DataType.STRING)
-  name!: string;
-
-  @Column(DataType.STRING)
-  status!: string;
+  @AllowNull(true)
+  @Unique
+  @Column(DataType.TEXT)
+  name: string;
 
   @Column(DataType.TEXT)
-  qrcode!: string;
+  session: string;
 
-  @Column(DataType.INTEGER)
-  retries!: number;
+  @Column(DataType.TEXT)
+  qrcode: string;
+
+  @Column
+  status: string;
+
+  @Column
+  battery: string;
+
+  @Column
+  plugged: boolean;
+
+  @Column
+  retries: number;
+
+  @Column(DataType.TEXT)
+  greetingMessage: string;
+
+  @Column(DataType.TEXT)
+  farewellMessage: string;
+
+  @Column(DataType.TEXT)
+  outOfHoursMessage: string;
 
   @Default(false)
-  @Column(DataType.BOOLEAN)
-  isDefault!: boolean;
+  @Column
+  isDefault: boolean;
 
   @Column(DataType.TEXT)
-  greetingMessage!: string;
+  token: string;
 
-  @Column(DataType.TEXT)
-  farewellMessage!: string;
+  // --- CORREÇÃO: Adicionar companyId ---
+  @ForeignKey(() => Company)
+  @Column
+  companyId: number;
 
-  @Column(DataType.TEXT)
-  outOfHoursMessage!: string;
+  @BelongsTo(() => Company)
+  company: Company;
+  // -------------------------------------
 
   @CreatedAt
-  createdAt!: Date;
+  createdAt: Date;
 
   @UpdatedAt
-  updatedAt!: Date;
+  updatedAt: Date;
 }

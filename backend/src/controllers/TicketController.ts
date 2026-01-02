@@ -1,5 +1,5 @@
 // cspell:disable
-import { Request, Response } from "express";
+import { Response } from "express";
 import { getIO } from "../libs/socket";
 
 import CreateTicketService from "../services/TicketServices/CreateTicketService";
@@ -7,8 +7,6 @@ import DeleteTicketService from "../services/TicketServices/DeleteTicketService"
 import ListTicketsServiceKanban from "../services/TicketServices/ListTicketsServiceKanban"; // Verifique se este arquivo existe
 import ShowTicketService from "../services/TicketServices/ShowTicketService";
 import UpdateTicketService from "../services/TicketServices/UpdateTicketService";
-
-import AppError from "../errors/AppError";
 
 type IndexQuery = {
   searchParam?: string;
