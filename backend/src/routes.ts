@@ -5,6 +5,8 @@ import uploadConfig from "./config/upload";
 
 import apiIntegrationRoutes from "./routes/apiIntegrationRoutes";
 import authRoutes from "./routes/authRoutes";
+import whatsappRoutes from "./routes/whatsappRoutes";
+import contactRoutes from "./routes/contactRoutes"; // Adicionado rota de contactos
 
 import * as IxcController from "./controllers/IxcController";
 import * as SipController from "./controllers/SipController";
@@ -28,9 +30,10 @@ import * as QueueController from "./controllers/QueueController";
 import * as SuperAdminController from "./controllers/SuperAdminController";
 import * as PlanController from "./controllers/PlanController";
 import * as SubscriptionController from "./controllers/SubscriptionController";
-import whatsappRoutes from "./routes/whatsappRoutes";
+// import * as StripeWebhookController from "./controllers/StripeWebhookController"; // Se existir
+
 import isAuth from "./middleware/isAuth";
-import isSuper from "./middleware/isSuper"; // <--- NOVO IMPORT
+import isSuper from "./middleware/isSuper";
 
 const routes = Router();
 const upload = multer(uploadConfig);
@@ -49,6 +52,7 @@ routes.get("/ping", (req, res) => {
 
 routes.use(authRoutes);
 routes.use(apiIntegrationRoutes);
+routes.use(contactRoutes); // Registando rotas de contacto (importante para o upload CSV)
 routes.post("/ixc/webhook/payment", IxcController.webhookPayment);
 
 // --- Rotas Protegidas ---
@@ -101,6 +105,8 @@ routes.delete(
 // Campaigns
 routes.get("/campaigns", isAuth, CampaignController.index);
 routes.post("/campaigns", isAuth, CampaignController.store);
+routes.put("/campaigns/:id", isAuth, CampaignController.update); // Adicionado update
+routes.delete("/campaigns/:id", isAuth, CampaignController.remove); // Adicionado remove
 
 // Dunning
 routes.get("/dunning", isAuth, DunningController.index);
@@ -193,12 +199,6 @@ routes.put(
   isSuper,
   SuperAdminController.updateCompany
 );
-routes.get(
-  "/companies/me",
-  isAuth,
-  isSuper,
-  SuperAdminController.currentCompany
-);
 
 // Gestão de Planos
 routes.get("/plans", isAuth, isSuper, PlanController.index);
@@ -207,6 +207,9 @@ routes.put("/plans/:id", isAuth, isSuper, PlanController.update);
 routes.delete("/plans/:id", isAuth, isSuper, PlanController.remove);
 
 // =========================================================================
+
+// Rota movida para fora do isSuper para que Admin comum possa ver sua empresa
+routes.get("/companies/me", isAuth, SuperAdminController.currentCompany);
 
 // Subscription (Stripe)
 routes.post(

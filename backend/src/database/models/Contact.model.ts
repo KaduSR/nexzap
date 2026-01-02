@@ -1,6 +1,8 @@
-// cspell:disable
+// cspell: disable
 import {
+  AllowNull,
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -10,45 +12,74 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
   UpdatedAt,
 } from "sequelize-typescript";
-import { Company } from "./Company.model"; // Use chaves {} se o Company já tiver sido corrigido
-import { Ticket } from "./Ticket.model"; // Use chaves {} se o Ticket já tiver sido corrigido
+import { Company } from "./Company.model";
+import { ContactCustomField } from "./ContactCustomField.model";
+import { Schedule } from "./Schedule.model";
+import { Ticket } from "./Ticket.model";
 
-@Table({ tableName: "Contacts" })
-export class Contact extends Model {
-  // <--- ADICIONE 'export' AQUI
+@Table
+export class Contact extends Model<Contact> {
   @PrimaryKey
   @AutoIncrement
   @Column
-  id!: number;
+  id: number;
 
-  @Column(DataType.STRING)
-  name!: string;
+  @Column
+  name: string;
 
-  @Column(DataType.STRING)
-  number!: string;
+  @AllowNull(false)
+  @Unique
+  @Column
+  number: string;
 
-  @Column(DataType.STRING)
-  email!: string;
+  @AllowNull(false)
+  @Default("")
+  @Column
+  email: string;
 
-  @Column(DataType.STRING)
-  profilePicUrl!: string;
+  @Column
+  profilePicUrl: string;
 
   @Default(false)
-  @Column(DataType.BOOLEAN)
-  isGroup!: boolean;
+  @Column
+  isGroup: boolean;
 
-  @ForeignKey(() => Company)
+  // --- NOVOS CAMPOS IXC ---
+  @AllowNull(true)
   @Column(DataType.INTEGER)
-  companyId!: number;
+  ixcId: number;
 
-  @HasMany(() => Ticket)
-  tickets!: Ticket[];
+  @AllowNull(true)
+  @Column(DataType.STRING)
+  cpf: string;
+  // ------------------------
 
   @CreatedAt
-  createdAt!: Date;
+  createdAt: Date;
 
   @UpdatedAt
-  updatedAt!: Date;
+  updatedAt: Date;
+
+  @HasMany(() => Ticket)
+  tickets: Ticket[];
+
+  @HasMany(() => ContactCustomField)
+  extraInfo: ContactCustomField[];
+
+  @ForeignKey(() => Company)
+  @Column
+  companyId: number;
+
+  @BelongsTo(() => Company)
+  company: Company;
+
+  @HasMany(() => Schedule, {
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
+    hooks: true,
+  })
+  schedules: Schedule[];
 }

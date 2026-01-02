@@ -30,3 +30,5 @@ export * from "./User.model";
 export * from "./UserQueue.model"; // <--- O ERRO ESTAVA AQUI (Faltava este)
 export * from "./UserRating.model";
 export * from "./Whatsapp.model";
+export * from "./ContactCustomField.model";
+export * from "./Schedule.model";

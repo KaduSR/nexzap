@@ -1,0 +1,55 @@
+// cspell: disable
+import { Op, Sequelize } from "sequelize";
+import { Contact } from "../../database/models/Contact.model";
+
+interface Request {
+  searchParam?: string;
+  pageNumber?: string;
+  companyId: number;
+}
+
+interface Response {
+  contacts: Contact[];
+  count: number;
+  hasMore: boolean;
+}
+
+const ListContactsService = async ({
+  searchParam = "",
+  pageNumber = "1",
+  companyId,
+}: Request): Promise<Response> => {
+  const whereCondition = {
+    companyId,
+    [Op.or]: [
+      {
+        name: Sequelize.where(
+          Sequelize.fn("LOWER", Sequelize.col("name")),
+          "LIKE",
+          `%${searchParam.toLowerCase().trim()}%`
+        ),
+      },
+      { number: { [Op.like]: `%${searchParam.toLowerCase().trim()}%` } },
+    ],
+  };
+
+  const limit = 20;
+  const offset = limit * (+pageNumber - 1);
+
+  const { count, rows: contacts } = await Contact.findAndCountAll({
+    where: whereCondition,
+    limit,
+    offset,
+    order: [["name", "ASC"]],
+  });
+
+  const hasMore = count > offset + contacts.length;
+
+  return {
+    contacts,
+    count,
+    hasMore,
+  };
+};
+
+export default ListContactsService;

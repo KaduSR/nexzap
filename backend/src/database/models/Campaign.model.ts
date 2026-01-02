@@ -12,6 +12,7 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import { CampaignShipping } from "./CampaignShipping.model";
+import { Company } from "./Company.model";
 import { Whatsapp } from "./Whatsapp.model";
 
 @Table({ tableName: "Campaigns" })
@@ -51,6 +52,13 @@ export class Campaign extends Model<Campaign> {
 
   @HasMany(() => CampaignShipping)
   shipping!: CampaignShipping[];
+
+  @ForeignKey(() => Company)
+  @Column
+  companyId!: number;
+
+  @BelongsTo(() => Company)
+  company: Company;
 
   @CreatedAt
   createdAt!: Date;
