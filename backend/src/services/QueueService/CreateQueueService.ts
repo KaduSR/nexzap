@@ -1,7 +1,5 @@
 // cspell: disable
-import { Queue } from "../../database/models/Queue.model";
-import { UserQueue } from "../../database/models/UserQueue.model";
-import { User } from "../../database/models/User.model";
+import { Queue, User } from "../../database/models/";
 
 interface Request {
   name: string;
@@ -11,8 +9,28 @@ interface Request {
   userIds?: number[];
 }
 
-const CreateQueueService = async({
+const CreateQueueService = async ({
   name,
   color,
   greetingMessage,
-});
+  companyId,
+  userIds = [],
+}: Request): Promise<Queue> => {
+  const queue = await Queue.create({
+    name,
+    color,
+    greetingMessage,
+    companyId,
+  });
+
+  if (userIds.length > 0) {
+    await queue.$set("users", userIds);
+  }
+
+  await queue.reload({
+    include: [{ model: User, as: "users", attributes: ["id", "name"] }],
+  });
+  return queue;
+};
+
+export default CreateQueueService;
