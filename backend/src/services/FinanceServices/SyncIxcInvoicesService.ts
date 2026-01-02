@@ -1,9 +1,11 @@
+// cspell: disable
 import { Contact } from "../../database/models/Contact.model";
 import { Invoice } from "../../database/models/Invoice.model";
 import { Setting } from "../../database/models/Setting.model";
 import { getIO } from "../../libs/socket";
 import { logger } from "../../utils/logger";
 import IxcClient from "../IxcService/IxcClient";
+import { Op } from "sequelize";
 
 export const SyncIxcInvoicesService = async (): Promise<void> => {
   // 1. Get Settings (In production, iterate over companies)
@@ -44,6 +46,7 @@ export const SyncIxcInvoicesService = async (): Promise<void> => {
           id: record.id_fatura,
           companyId,
         },
+        include: [{ model: Contact, as: "contact" }],
       });
 
       if (invoice && invoice.status !== "paid") {
@@ -51,7 +54,7 @@ export const SyncIxcInvoicesService = async (): Promise<void> => {
         await invoice.update({
           status: "paid",
           value: record.valor_recebido,
-          paidAt: new Date(),
+          paidAt: new Date(record.data_pagamento),
         });
 
         // 5. Notify Frontend

@@ -1,4 +1,5 @@
 import {
+  AllowNull,
   AutoIncrement,
   BelongsTo,
   Column,
@@ -11,6 +12,7 @@ import {
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
+import { Company } from "./Company.model";
 import { Contact } from "./Contact.model";
 
 @Table({ tableName: "Invoices" })
@@ -33,6 +35,10 @@ export class Invoice extends Model {
   @Column(DataType.STRING)
   status!: string; // 'paid', 'open', 'overdue'
 
+  @AllowNull(true)
+  @Column(DataType.INTEGER)
+  ixcId: number;
+
   @ForeignKey(() => Contact)
   @Column
   contactId!: number;
@@ -40,8 +46,12 @@ export class Invoice extends Model {
   @BelongsTo(() => Contact)
   contact!: Contact;
 
+  @ForeignKey(() => Company)
   @Column
   companyId!: number;
+
+  @BelongsTo(() => Company)
+  company: Company;
 
   @CreatedAt
   createdAt!: Date;
