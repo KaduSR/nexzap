@@ -1,5 +1,5 @@
-
-import makeWASocket, { WASocket } from "@whiskeysockets/baileys";
+// cspell: disable
+import { WASocket } from "@whiskeysockets/baileys";
 import AppError from "../errors/AppError";
 
 export type Session = WASocket & {
@@ -17,13 +17,13 @@ export const getWbot = (whatsappId: number): Session => {
 };
 
 export const initWbot = (whatsappId: number, wbot: Session): void => {
-    const sessionIndex = sessions.findIndex((s) => s.id === whatsappId);
-    if (sessionIndex !== -1) {
-        sessions[sessionIndex] = wbot;
-    } else {
-        sessions.push(wbot);
-    }
-}
+  const sessionIndex = sessions.findIndex((s) => s.id === whatsappId);
+  if (sessionIndex !== -1) {
+    sessions[sessionIndex] = wbot;
+  } else {
+    sessions.push(wbot);
+  }
+};
 
 export const removeWbot = (whatsappId: number): void => {
   const sessionIndex = sessions.findIndex((s) => s.id === whatsappId);
