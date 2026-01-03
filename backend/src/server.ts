@@ -5,7 +5,7 @@ import { sequelize, testConnection } from "./database/index";
 import { runSeeds } from "./database/seeders/runSeeds";
 import { initIO } from "./libs/socket";
 
-const PORT = process.env.PORT || 4000;
+const port = process.env.PORT || 8080;
 
 async function startServer() {
   try {
@@ -16,13 +16,14 @@ async function startServer() {
     console.log("✅ Banco de dados populado!");
 
     const httpServer = createServer(app);
-
+    console.log("✅ Servidor HTTP criado!");
     initIO(httpServer);
+    console.log("✅ Socket IO inicializado!");
 
-    httpServer.listen(PORT, () => {
-      console.log(`🚀 Servidor rodando na porta ${PORT}`);
-      console.log(`🌐 Acesse em: http://localhost:${PORT}`);
-      console.log(`🌐 Acesse em: http://0.0.0.0:${PORT}`);
+    httpServer.listen(port, () => {
+      console.log(`🚀 Servidor rodando na porta ${port}`);
+      console.log(`🌐 Acesse em: http://localhost:${port}`);
+      console.log(`🌐 Acesse em: http://0.0.0.0:${port}`);
     });
   } catch (error) {
     console.error("❌ Erro ao conectar ao banco de dados:", error);

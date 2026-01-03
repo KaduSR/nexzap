@@ -1,5 +1,4 @@
-
-import { Model, DataTypes } from "sequelize";
+import { Model } from "sequelize";
 
 export class Setting extends Model {
   public key!: string;

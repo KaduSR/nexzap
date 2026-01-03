@@ -1,94 +1,93 @@
-// cspell:disable
+// cspell: disable
 import React, {
   createContext,
   useContext,
   useEffect,
   useRef,
-  useCallback,
+  useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
 
-interface SocketContextValue {
+interface SocketContextData {
   socket: Socket | null;
-  emit: (event: string, data?: any) => void;
+  isConnected: boolean;
 }
 
-const SocketContext = createContext<SocketContextValue>({
-  socket: null,
-  emit: () => {},
-});
+const SocketContext = createContext<SocketContextData>({} as SocketContextData);
 
-// URL do backend
-const socketUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
-
-// 🔔 função para tocar som
-const playNotificationSound = () => {
-  const audio = new Audio(
-    "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"
-  );
-  audio.play().catch(() => {});
-};
-
-// 🔔 função para notificar push
-const sendBrowserNotification = (data: any) => {
-  if (!("Notification" in window)) return;
-  if (Notification.permission !== "granted") return;
-
-  new Notification(`Nova mensagem de ${data.contact.name}`, {
-    body: data.message.body,
-    icon: data.contact.profilePicUrl || "/favicon.ico",
-    tag: "new-message",
-  });
-};
+export const useSocket = () => useContext(SocketContext);
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  // O Ref serve para manter o objeto socket vivo sem causar re-renderizações
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    // Permissão de notificação
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
+    // 🛡️ Prevenção de duplicidade: Se já existe um socket ATIVO, não recria.
+    // Mas se ele existe e está desconectado (culpa do Strict Mode), deixamos recriar.
+    if (socketRef.current && socketRef.current.connected) {
+      return;
     }
 
-    // 👇 evita múltiplas conexões
-    if (!socketRef.current) {
-      socketRef.current = io(socketUrl, {
-        transports: ["websocket", "polling"],
-        withCredentials: true,
-      });
-    }
+    // 1. Definição da URL (Forçando IPv4 para evitar problemas de DNS no Node 17+)
+    const socketUrl = "http://127.0.0.1:8080";
 
-    const socket = socketRef.current;
+    console.log("🔌 Inicializando Socket em:", socketUrl);
 
-    socket.on("connect", () => console.log("🔌 Socket conectado:", socket.id));
-    socket.on("disconnect", () => console.log("❌ Socket desconectado"));
-
-    // Evento do seu app
-    socket.on("appMessage", (data: any) => {
-      if (data.action === "create" && !data.message.fromMe) {
-        playNotificationSound();
-        sendBrowserNotification(data);
-      }
+    // 2. Criação da Instância
+    const socketInstance = io(socketUrl, {
+      transports: ["websocket", "polling"], // Fallback essencial
+      autoConnect: false, // Controle manual
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 20000, // Timeout generoso para o handshake inicial
     });
 
+    socketRef.current = socketInstance;
+
+    // 3. Listeners
+    socketInstance.on("connect", () => {
+      console.log("✅ Socket Conectado! ID:", socketInstance.id);
+      setIsConnected(true);
+    });
+
+    socketInstance.on("disconnect", (reason) => {
+      console.log("⚠️ Socket Desconectado:", reason);
+      setIsConnected(false);
+    });
+
+    socketInstance.on("connect_error", (err) => {
+      console.error(`❌ Erro Socket (${err.message}). Detalhes:`, err);
+      // Dica: Se der erro de CORS aqui, verifique o backend
+    });
+
+    // 4. Salva no estado para a aplicação usar
+    setSocket(socketInstance);
+
+    // 5. Conecta de fato
+    socketInstance.connect();
+
+    // 6. Cleanup Function (CORRIGIDA)
     return () => {
-      socket.off("appMessage");
+      if (socketRef.current) {
+        console.log("🧹 Limpando conexão socket...");
+        socketRef.current.removeAllListeners();
+        socketRef.current.disconnect();
+        // CRUCIAL: Zeramos o ref. Isso permite que, se o componente remontar,
+        // ele saiba que precisa criar uma nova conexão limpa.
+        socketRef.current = null;
+      }
     };
   }, []);
 
-  // Callback para emitir eventos
-  const emit = useCallback((event: string, data?: any) => {
-    socketRef.current?.emit(event, data);
-  }, []);
-
   return (
-    <SocketContext.Provider value={{ socket: socketRef.current, emit }}>
+    <SocketContext.Provider value={{ socket, isConnected }}>
       {children}
     </SocketContext.Provider>
   );
 };
-
-// 🔌 Hook para acessar socket
-export const useSocket = () => useContext(SocketContext);

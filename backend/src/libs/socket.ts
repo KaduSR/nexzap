@@ -1,36 +1,54 @@
-
-import { Server as SocketIo } from "socket.io";
+// cspell: disable
 import { Server as HttpServer } from "http";
+import { Server as SocketIo } from "socket.io";
 
-let io: SocketIo;
+let ioInstance: SocketIo | null = null; // Renomeado para evitar confusão
 
 export const initIO = (httpServer: HttpServer): SocketIo => {
-  io = new SocketIo(httpServer, {
+  if (ioInstance) {
+    console.warn(
+      "⚠️ [Socket] initIO chamado novamente, mas já está inicializado. Retornando instância existente."
+    );
+    return ioInstance;
+  }
+
+  console.log("🔌 Inicializando Socket.IO...");
+
+  ioInstance = new SocketIo(httpServer, {
     cors: {
-      origin: "*",
-      methods: ["GET", "POST", "PUT", "DELETE"]
-    }
+      origin: [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        process.env.FRONTEND_URL,
+      ].filter((origin) => !!origin) as string[],
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    },
+    transports: ["websocket", "polling"],
   });
 
-  io.on("connection", (socket) => {
-    console.log(`[Socket] Client connected: ${socket.id}`);
-    
+  ioInstance.on("connection", (socket) => {
+    console.log(`⚡ [Socket] Client connected: ${socket.id}`);
     socket.on("joinChatBox", (ticketId: string) => {
-      console.log(`[Socket] Joined Ticket: ${ticketId}`);
+      console.log(`🎫 [Socket] Joined Ticket: ${ticketId}`);
       socket.join(ticketId);
     });
-
-    socket.on("disconnect", () => {
-      console.log(`[Socket] Client disconnected: ${socket.id}`);
+    socket.on("disconnect", (reason) => {
+      console.log(
+        `❌ [Socket] Client disconnected: ${socket.id} | Reason: ${reason}`
+      );
     });
   });
 
-  return io;
+  console.log("✅ Socket.IO inicializado e aguardando conexões");
+  return ioInstance;
 };
 
 export const getIO = (): SocketIo => {
-  if (!io) {
+  if (!ioInstance) {
     throw new Error("Socket IO not initialized");
   }
-  return io;
+  return ioInstance;
 };

@@ -144,7 +144,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   }
 
   return (
-    <div className="w-full min-w-[240px] max-w-md space-y-2">
+    <div className="w-full min-w-60 max-w-md space-y-2">
       <div className="flex items-center gap-3 bg-white dark:bg-slate-900/80 p-2 pr-4 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm backdrop-blur-sm">
         <button
           onClick={handlePlayPause}

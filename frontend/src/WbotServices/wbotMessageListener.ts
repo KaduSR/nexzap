@@ -1,3 +1,4 @@
+// cspell: disable
 
 export const wbotMessageListener = (wbot: any) => {
   console.log(`[Listener] Ouvindo mensagens na sessão ${wbot.id}`);

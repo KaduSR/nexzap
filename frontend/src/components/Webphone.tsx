@@ -1,3 +1,4 @@
+// cspell: disable
 import React, { useState, useEffect } from 'react';
 import { useSip } from '../context/SipContext';
 import { useLocation } from 'react-router-dom';
@@ -79,7 +80,7 @@ const Webphone: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-80 bg-slate-900 border border-slate-700 rounded-[32px] shadow-2xl overflow-hidden flex flex-col animate-in slide-in-from-bottom-10 duration-300">
+    <div className="fixed bottom-6 right-6 z-50 w-80 bg-slate-900 border border-slate-700 rounded-4xl shadow-2xl overflow-hidden flex flex-col animate-in slide-in-from-bottom-10 duration-300">
         
         {/* Header */}
         <div className={`p-4 flex justify-between items-center ${callStatus === 'InCall' ? 'bg-emerald-600' : 'bg-indigo-600'} transition-colors duration-500`}>
@@ -93,8 +94,8 @@ const Webphone: React.FC = () => {
         </div>
 
         {/* Display Area */}
-        <div className="flex-1 bg-slate-950 p-6 flex flex-col items-center justify-center relative min-h-[180px]">
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-slate-950/0 pointer-events-none"></div>
+        <div className="flex-1 bg-slate-950 p-6 flex flex-col items-center justify-center relative min-h-45">
+            <div className="absolute inset-0 bg-linear-to-b from-slate-900/50 to-slate-950/0 pointer-events-none"></div>
             
             {callStatus === 'Idle' ? (
                 <input 

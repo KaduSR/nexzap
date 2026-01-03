@@ -1,11 +1,12 @@
 // cspell:disable
-import { endOfDay, parseISO, startOfDay } from "date-fns";
+import { endOfDay, startOfDay } from "date-fns";
 import { Op } from "sequelize";
 import { Contact } from "../../database/models/Contact.model";
 import { Queue } from "../../database/models/Queue.model";
 import { Tag } from "../../database/models/Tag.model";
 import { Ticket } from "../../database/models/Ticket.model";
 import { User } from "../../database/models/User.model";
+import { parseISO } from "date-fns/parseISO";
 
 // Interface corrigida para aceitar TODOS os parâmetros do Controller
 interface Request {

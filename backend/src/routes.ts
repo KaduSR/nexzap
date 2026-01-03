@@ -30,7 +30,7 @@ import * as QueueController from "./controllers/QueueController";
 import * as SuperAdminController from "./controllers/SuperAdminController";
 import * as PlanController from "./controllers/PlanController";
 import * as SubscriptionController from "./controllers/SubscriptionController";
-// import * as StripeWebhookController from "./controllers/StripeWebhookController"; // Se existir
+import * as StripeWebhookController from "./controllers/StripeWebhookController"; // Se existir
 
 import isAuth from "./middleware/isAuth";
 import isSuper from "./middleware/isSuper";
