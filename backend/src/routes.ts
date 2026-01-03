@@ -50,7 +50,7 @@ routes.get("/ping", (req, res) => {
   return res.json({ message: "Pong 🏓", timestamp: new Date() });
 });
 
-routes.use(authRoutes);
+routes.use("/auth", authRoutes);
 routes.use(apiIntegrationRoutes);
 routes.use(contactRoutes); // Registando rotas de contacto (importante para o upload CSV)
 routes.post("/ixc/webhook/payment", IxcController.webhookPayment);

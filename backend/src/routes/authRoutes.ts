@@ -3,8 +3,8 @@ import * as AuthController from "../controllers/AuthController";
 
 const authRoutes = Router();
 
-authRoutes.post("/auth/signup", AuthController.register);
-authRoutes.post("/auth/login", AuthController.login);
-authRoutes.post("/auth/refresh", AuthController.refresh);
+authRoutes.post("/signup", AuthController.register);
+authRoutes.post("/login", AuthController.login);
+authRoutes.post("/refresh_token", AuthController.refresh);
 
 export default authRoutes;
