@@ -1,12 +1,14 @@
-// cspell:disable
-import { Response } from "express";
-import { Invoice, Setting } from "../database/models/";
+// cspell: disable
+import { Invoice } from "../database/models/Invoice.model";
+import { Setting } from "../database/models/Setting.model";
 import AppError from "../errors/AppError";
 import { getIO } from "../libs/socket";
 import IxcClient from "../services/IxcService/IxcClient";
+import { Request, Response } from "express";
 
-export const index = async (req: any, res: Response): Promise<Response> => {
-  const { companyId } = req.user;
+// Observe o uso de 'Request' e 'Response'
+export const index = async (req: Request, res: Response): Promise<Response> => {
+  const { companyId } = (req as any).user;
 
   const ixcToken = await Setting.findOne({
     where: { key: "ixc_token", companyId },
@@ -22,7 +24,8 @@ export const index = async (req: any, res: Response): Promise<Response> => {
   const ixc = new IxcClient(ixcToken.value, ixcUrl.value);
 
   try {
-    const customers = await ixc.getClientByCpf((req.query.cpf as string) || "");
+    const cpf = (req.query.cpf as string) || "";
+    const customers = await ixc.getClientByCpf(cpf);
     return res.json(customers);
   } catch (error) {
     throw new AppError("Error fetching IXC customers");
@@ -37,17 +40,25 @@ export const getOsParams = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  return res.json({
-    message: "Not implemented yet",
-  });
+  return res.json({ subjects: [], technicians: [] });
+};
+
+export const createOs = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { companyId } = (req as any).user;
+  const data = req.body;
+
+  return res.json({ message: "OS Created (Mock)", data });
 };
 
 export const webhookPayment = async (
-  req: any,
+  req: Request,
   res: Response
 ): Promise<Response> => {
-  const body = req.body as any;
-  const { id_fatura, status, valor_pago } = body;
+  const body = req.body;
+  const { id_fatura, valor_pago } = body;
 
   console.log("⚠️ [IXC WEBHOOK] Recebido:", body);
 
@@ -55,11 +66,7 @@ export const webhookPayment = async (
     return res.status(400).json({ error: "Missing Invoice ID" });
   }
 
-  const invoice = await Invoice.findOne({
-    where: {
-      ixcId: id_fatura,
-    },
-  });
+  const invoice = await Invoice.findOne({ where: { ixcId: id_fatura } });
 
   if (invoice) {
     await invoice.update({

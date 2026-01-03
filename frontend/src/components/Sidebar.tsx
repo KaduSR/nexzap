@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/Auth/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

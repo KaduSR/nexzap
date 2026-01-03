@@ -1,54 +1,66 @@
-import express from "express";
-import isAuth from "../middleware/isAuth";
-import * as ApiIntegrationController from "../controllers/ApiIntegrationController";
+// cspell: disable
+import api from "../services/api";
 
-const apiIntegrationRoutes = express.Router();
+// Definindo tipos para ajudar no desenvolvimento
+export interface ApiIntegration {
+  id: number;
+  name: string;
+  projectName: string;
+  jsonContent: string;
+  url: string;
+  apikey: string;
+  language: string;
+  status: string; // ex: 'CONNECTED', 'DISCONNECTED'
+  companyId: number;
+}
 
-apiIntegrationRoutes.get(
-  "/api-integrations",
-  isAuth,
-  ApiIntegrationController.index
-);
-apiIntegrationRoutes.post(
-  "/api-integrations",
-  isAuth,
-  ApiIntegrationController.store
-);
-apiIntegrationRoutes.get(
-  "/api-integrations/:integrationId",
-  isAuth,
-  ApiIntegrationController.show
-);
-apiIntegrationRoutes.get(
-  "/api-integrations/:integrationId/qrcode",
-  isAuth,
-  ApiIntegrationController.getQrCode
-);
-apiIntegrationRoutes.post(
-  "/api-integrations/:integrationId/connection-status",
-  isAuth,
-  ApiIntegrationController.getConnectionStatus
-);
-apiIntegrationRoutes.put(
-  "/api-integrations/:integrationId",
-  isAuth,
-  ApiIntegrationController.update
-);
-apiIntegrationRoutes.delete(
-  "/api-integrations/:integrationId",
-  isAuth,
-  ApiIntegrationController.remove
-);
+const apiIntegrationService = {
+  // GET /api-integrations
+  list: async (params?: { searchParam?: string; pageNumber?: string }) => {
+    const { data } = await api.get("/api-integrations", { params });
+    return data;
+  },
 
-// Webhook endpoint (sem autenticação - chamado pela Evolution API)
-apiIntegrationRoutes.post(
-  "/api-integrations/webhook/:companyId/:event?",
-  ApiIntegrationController.webhook
-);
+  // POST /api-integrations
+  store: async (data: Partial<ApiIntegration>) => {
+    const { data: responseData } = await api.post("/api-integrations", data);
+    return responseData;
+  },
 
-apiIntegrationRoutes.post(
-  "/api-integrations/webhook/messages/receive",
-  ApiIntegrationController.webhookReceiveMessages
-);
+  // GET /api-integrations/:integrationId
+  get: async (id: number | string) => {
+    const { data } = await api.get(`/api-integrations/${id}`);
+    return data;
+  },
 
-export default apiIntegrationRoutes;
+  // PUT /api-integrations/:integrationId
+  update: async (id: number | string, data: Partial<ApiIntegration>) => {
+    const { data: responseData } = await api.put(
+      `/api-integrations/${id}`,
+      data
+    );
+    return responseData;
+  },
+
+  // DELETE /api-integrations/:integrationId
+  delete: async (id: number | string) => {
+    const { data } = await api.delete(`/api-integrations/${id}`);
+    return data;
+  },
+
+  // GET /api-integrations/:integrationId/qrcode
+  getQrCode: async (id: number | string) => {
+    const { data } = await api.get(`/api-integrations/${id}/qrcode`);
+    return data; // Deve retornar o base64 ou link do QR
+  },
+
+  // POST /api-integrations/:integrationId/connection-status
+  getConnectionStatus: async (id: number | string) => {
+    const { data } = await api.post(
+      `/api-integrations/${id}/connection-status`
+    );
+    return data;
+  },
+};
+
+export default apiIntegrationService;

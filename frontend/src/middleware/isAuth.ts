@@ -1,4 +1,4 @@
-
+// cspell: disable
 /**
  * Mock Middleware de Autenticação
  * Em produção, este arquivo validaria o JWT e injetaria o usuário na requisição.

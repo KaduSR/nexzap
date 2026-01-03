@@ -1,10 +1,12 @@
+// cspell: disable
+import { UpdatedAt } from "sequelize-typescript/dist";
 import { Message } from "../../database/models/Message.model";
 import { Ticket } from "../../database/models/Ticket.model";
 import { getIO } from "../../libs/socket";
 import { getWbot } from "../../libs/wbot";
 
 interface MessageData {
-  id: string;
+  id?: string | number;
   ticketId: number;
   body: string | null;
   contactId?: number;
@@ -20,6 +22,7 @@ interface MessageData {
 interface Request {
   messageData: MessageData;
   companyId: number;
+  media?: Express.Multer.File;
 }
 
 const CreateMessageService = async ({
@@ -34,7 +37,10 @@ const CreateMessageService = async ({
     include: ["contact"],
   });
   if (ticket) {
-    await (ticket as any).update({ lastMessage: message.body });
+    await (ticket as any).update({
+      lastMessage: message.body,
+      UpdatedAt: new Date(),
+    });
   }
 
   // 3. SEND TO WHATSAPP (ONLY IF NOT PRIVATE)
@@ -57,7 +63,7 @@ const CreateMessageService = async ({
 
   // 4. Emit Socket (Visible to Agents)
   const io = getIO();
-  io.to(message.ticketId.toString()).emit("appMessage", {
+  io.to(message.ticketId.toString()).emit(`company-${companyId}-appMessage`, {
     action: "create",
     message,
     ticket: ticket,

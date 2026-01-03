@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   DisconnectReason,
   fetchLatestBaileysVersion,
@@ -22,6 +23,13 @@ export class BaileysProvider implements IWhatsappProvider {
 
   public async init(): Promise<WASocket> {
     const { whatsapp } = this;
+
+    const {
+      default: makeWASocket,
+      DisconnectReason,
+      fetchLatestBaileysVersion,
+      makeCacheableSignalKeyStore,
+    } = await import("@whiskeysockets/baileys");
 
     whatsapp.status = "OPENING";
     await (whatsapp as any).save();

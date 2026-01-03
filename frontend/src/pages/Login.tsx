@@ -1,17 +1,17 @@
 // cspell: disable
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { Link } from "react-router-dom";
 import {
-  Lock,
-  Mail,
+  ArrowRight,
+  CheckCircle2,
   Eye,
   EyeOff,
   Loader2,
-  ArrowRight,
+  Lock,
+  Mail,
   Zap,
-  CheckCircle2,
 } from "lucide-react";
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../context/Auth/AuthContext";
 
 const Login: React.FC = () => {
   const [form, setForm] = useState({ email: "", password: "" });

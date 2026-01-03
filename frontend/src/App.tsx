@@ -11,7 +11,7 @@ import {
 import { Loader2, Menu } from "lucide-react";
 
 // Contextos
-import { AuthContext, AuthProvider } from "./context/AuthContext";
+import { AuthContext, AuthProvider } from "./context/Auth/AuthContext";
 import { SipProvider } from "./context/SipContext";
 import { SocketProvider } from "./context/SocketContext"; // <-- NOVO
 

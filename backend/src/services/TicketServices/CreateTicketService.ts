@@ -1,4 +1,5 @@
 // cspell: disable
+import { Op } from "sequelize";
 import { Contact } from "../../database/models/Contact.model";
 import { Ticket } from "../../database/models/Ticket.model";
 import { User } from "../../database/models/User.model";
@@ -21,7 +22,7 @@ const CreateTicketService = async ({
 }: Request): Promise<Ticket> => {
   // 1. Verificar se já existe ticket aberto para este contato
   const ticketExists = await (Ticket as any).findOne({
-    where: { contactId, status: ["open", "pending"] },
+    where: { contactId, companyId, status: { [Op.or]: ["open", "pending"] } },
   });
 
   if (ticketExists) {
@@ -45,9 +46,6 @@ const CreateTicketService = async ({
       // O ideal é buscar o usuário com menor numero de tickets 'open'
       const randomIndex = Math.floor(Math.random() * userIds.length);
       assignedUserId = userIds[randomIndex];
-      console.log(
-        `[Round Robin] Ticket distribuído para User ID: ${assignedUserId}`
-      );
     }
   }
 
@@ -59,14 +57,15 @@ const CreateTicketService = async ({
     companyId,
     queueId, // Salva a fila
     lastMessage: "",
+    isGroup: false,
     unreadMessages: 0,
   });
 
   // Reload para trazer associações
   await ticket.reload({
     include: [
-      { model: Contact, as: "contact" },
-      { model: User, as: "user" },
+      { model: Contact, as: "contact", include: ["extraInfo"] },
+      { model: User, as: "user", attributes: ["id", "name"] },
     ],
   });
 
