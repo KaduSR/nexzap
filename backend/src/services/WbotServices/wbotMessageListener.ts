@@ -1,13 +1,10 @@
 // cspell: disable
-import {
-  downloadMediaMessage,
-  extractMessageContent,
-  proto,
-  WASocket,
-} from "@whiskeysockets/baileys";
 import { writeFile } from "fs";
 import { join } from "path";
 import { promisify } from "util";
+
+// 1. Alteração: Importar APENAS os tipos no topo
+import type { proto, WASocket } from "@whiskeysockets/baileys";
 
 import { Contact } from "../../database/models/Contact.model";
 import { Message } from "../../database/models/Message.model";
@@ -36,7 +33,6 @@ const verifyContact = async (
   let profilePicUrl: string | undefined;
   try {
     // profilePicUrl = await wbot.profilePictureUrl(msgContact.id, "image");
-    // Baileys often fails fetching profile pic, defaulting to undefined to prevent crashes
     profilePicUrl = undefined;
   } catch (e) {
     profilePicUrl = undefined;
@@ -62,6 +58,11 @@ const verifyMediaMessage = async (
   contact: Contact,
   wbot: Session
 ): Promise<void> => {
+  // 2. Alteração: Importar as funções (valores) AQUI DENTRO dinamicamente
+  const { downloadMediaMessage, extractMessageContent } = await import(
+    "@whiskeysockets/baileys"
+  );
+
   const messageContent = extractMessageContent(msg.message);
   const type = Object.keys(messageContent || {})[0];
   const mediaTypes = [
