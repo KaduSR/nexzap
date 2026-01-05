@@ -1,5 +1,5 @@
-
-import { Model, DataTypes } from "sequelize";
+// cspell: disable
+import { Model } from "sequelize";
 
 class ApiIntegration extends Model {
   public id!: number;

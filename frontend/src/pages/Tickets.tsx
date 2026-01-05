@@ -35,8 +35,9 @@ import ServicePriceList from "../components/ServicePriceList";
 import TicketAiPanel from "../components/TicketAiPanel";
 import TransferTicketModal from "../components/TransferTicketModal"; // Import
 import { useSip } from "../context/SipContext";
+import { useSocket } from "../context/SocketContext";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 // --- Types ---
 interface Ticket {
@@ -133,10 +134,11 @@ const INITIAL_MESSAGES: Message[] = [
 // --- COMPONENTS ---
 
 const Tickets: React.FC = () => {
+  const { socket } = useSocket();
   const { makeCall } = useSip(); // Hook SIP
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [currentMessages, setCurrentMessages] =
-    useState<Message[]>(INITIAL_MESSAGES);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [currentMessages, setCurrentMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [isPrivateMode, setIsPrivateMode] = useState(false); // Internal Note Mode
   const [showIxcPanel, setShowIxcPanel] = useState(false);
@@ -182,9 +184,26 @@ const Tickets: React.FC = () => {
 
   // Set initial ticket for non-mobile
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setSelectedTicket(DUMMY_TICKETS[0]);
-    }
+    const fetchTickets = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/tickets`, {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer token",
+            "Content-Type": "application/json",
+          },
+        });
+        if (!res.ok) {
+          throw new Error(`Erro na API: ${res.status}`);
+        }
+        const data = await res.json();
+        console.log("Tickets carregando:", data);
+        setTickets(data);
+      } catch (error) {
+        console.error("Erro ao buscar tickets:", error);
+      }
+    };
+    fetchTickets();
   }, []);
 
   // Fetch AI settings
@@ -253,6 +272,39 @@ const Tickets: React.FC = () => {
       console.error("Failed to load IXC data");
     } finally {
       setLoadingIxc(false);
+    }
+  };
+
+  const handleSelectedTicket = async (ticket: Ticket) => {
+    setSelectedTicket(ticket);
+    setCurrentMessages([]);
+
+    if (socket) {
+      console.log("📡 Entrando na sala", ticket.id);
+      socket.emit("joinChatBox", ticket.id);
+    }
+
+    try {
+      const res = await fetch(
+        `${API_URL}/api/messages/${ticket.id}?pageNumber=1`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer token",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Erro ao carregar mensagens");
+
+      const data = await res.json();
+
+      if (data.messages && Array.isArray(data.messages)) {
+        setCurrentMessages(data.messages.reverse());
+      }
+    } catch (err) {
+      console.error("❌ Erro ao buscar histórico:", err);
     }
   };
 
@@ -397,9 +449,7 @@ const Tickets: React.FC = () => {
     }
   };
 
-  const filteredTickets = DUMMY_TICKETS.filter(
-    (t) => t.status === statusFilter
-  );
+  const filteredTickets = tickets.filter((t) => t.status === statusFilter);
 
   return (
     <div className="w-full flex flex-1 h-screen overflow-hidden bg-slate-50 dark:bg-slate-900 animate-in fade-in duration-500">
@@ -474,7 +524,7 @@ const Tickets: React.FC = () => {
             filteredTickets.map((ticket) => (
               <div
                 key={ticket.id}
-                onClick={() => setSelectedTicket(ticket)}
+                onClick={() => handleSelectedTicket(ticket)}
                 className={`p-4 flex gap-4 cursor-pointer transition-all rounded-2xl group ${
                   selectedTicket?.id === ticket.id
                     ? "bg-indigo-600 shadow-lg shadow-indigo-500/20"

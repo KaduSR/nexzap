@@ -14,6 +14,7 @@ type IndexQuery = {
 
 export const index = async (req: any, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
+
   const { pageNumber } = req.query as IndexQuery;
   const { companyId } = req.user;
 

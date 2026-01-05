@@ -1,7 +1,7 @@
 // cspell: disable
 import axios, { AxiosInstance } from "axios";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080/api";
 
 const api: AxiosInstance = axios.create({
   baseURL: backendUrl,

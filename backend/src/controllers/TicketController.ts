@@ -130,3 +130,29 @@ export const remove = async (req: any, res: Response): Promise<Response> => {
 
   return res.status(200).json({ message: "Ticket deleted" });
 };
+
+export const index = async (req: any, res: Response): Promise<Response> => {
+  const tickets = [
+    {
+      id: "1",
+      name: "João Silva (Teste Back)",
+      lastMsg: "Integração funcionando!",
+      time: "10:30",
+      unread: 2,
+      status: "open",
+      ixcCustomer: true,
+      profilePicUrl: "", // Adicione se quiser imagem
+    },
+    {
+      id: "2",
+      name: "Maria Souza",
+      lastMsg: "O boleto já chegou?",
+      time: "Ontem",
+      unread: 0,
+      status: "pending",
+      ixcCustomer: false,
+    },
+  ];
+
+  return res.status(200).json(tickets);
+};

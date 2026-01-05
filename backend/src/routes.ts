@@ -76,6 +76,7 @@ routes.post("/flowbuilder", isAuth, FlowBuilderController.save);
 // Tickets
 routes.get("/tickets/kanban", isAuth, TicketController.indexKanban);
 routes.post("/tickets", isAuth, TicketController.store);
+routes.get("/tickets", isAuth, TicketController.index);
 routes.put("/tickets/:ticketId", isAuth, TicketController.update);
 routes.get("/tickets/:ticketId/ai-analysis", isAuth, TicketAiController.show);
 
@@ -137,6 +138,8 @@ routes.post(
   upload.array("medias"),
   MessageController.store
 );
+routes.get("/messages/:ticketId", isAuth, MessageController.index);
+routes.delete("/messages/:messageId", isAuth, MessageController.remove);
 
 // WhatsApp Actions
 routes.post(

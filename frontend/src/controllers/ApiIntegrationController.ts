@@ -1,9 +1,9 @@
+// cspell: disable
 
 /**
  * Mock Controller para Integrações de API
  * Gerencia a lógica de negócio para Webhooks e QR Codes.
  */
-
 export const index = async (req: any, res: any) => {
   return res.json({ message: "Listando integrações..." });
 };

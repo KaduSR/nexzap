@@ -1,4 +1,4 @@
-
+// cspell: disable
 import { Router } from "express";
 import apiIntegrationRoutes from "./apiIntegrationRoutes";
 
