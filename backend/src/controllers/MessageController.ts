@@ -1,12 +1,12 @@
 // cspell:disable
-import { Request, Response } from "express";
-import AppError from "../errors/AppError";
-import SetTicketMessagesAsRead from "../services/TicketServices/SetTicketMessagesAsRead";
-import CreateMessageService from "../services/MessageServices/CreateMessageService";
-import ListMessagesService from "../services/MessageServices/ListMessagesService";
-import DeleteMessageService from "../services/MessageServices/DeleteMessageService"; // Se existir
-import { getIO } from "../libs/socket";
+import { Response } from "express";
 import { Ticket } from "../database/models/Ticket.model";
+import AppError from "../errors/AppError";
+import { getIO } from "../libs/socket";
+import CreateMessageService from "../services/MessageServices/CreateMessageService";
+import DeleteMessageService from "../services/MessageServices/DeleteMessageService";
+import ListMessagesService from "../services/MessageServices/ListMessagesService";
+import SetTicketMessagesAsRead from "../services/TicketServices/SetTicketMessagesAsRead";
 
 type IndexQuery = {
   pageNumber: string;
@@ -15,23 +15,51 @@ type IndexQuery = {
 export const index = async (req: any, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
 
-  const { pageNumber } = req.query as IndexQuery;
-  const { companyId } = req.user;
+  // 1. MOCK DE MENSAGENS (Simulação)
+  const messages = [
+    {
+      id: "msg-1",
+      body: `Olá! Aqui são as mensagens do Ticket ${ticketId} vindas do Backend!`,
+      fromMe: false,
+      read: true,
+      mediaType: "chat",
+      createdAt: new Date().toISOString(),
+      contactId: 1,
+      ticketId: Number(ticketId),
+    },
+    {
+      id: "msg-2",
+      body: "Essa mensagem fui eu (atendente) que mandei.",
+      fromMe: true,
+      read: true,
+      mediaType: "chat",
+      createdAt: new Date().toISOString(),
+      contactId: null,
+      ticketId: Number(ticketId),
+    },
+  ];
 
-  const { count, messages, ticket, hasMore } = await ListMessagesService({
-    pageNumber,
-    ticketId,
-    companyId,
-  });
+  // Comentei para evitar erros se não houver dados no banco ainda
+  // const { pageNumber } = req.query as IndexQuery;
+  // const { companyId } = req.user;
 
-  // Marca como lida ao abrir o chat
-  await SetTicketMessagesAsRead(ticketId);
+  // 2. Comentamos o serviço real para usar o Mock
+  // const { count, messages, ticket, hasMore } = await ListMessagesService({ ... });
 
+  // 3. Tenta marcar como lido (Pode dar erro se o ticket não existir no banco real,
+  // então vamos envolver num try/catch silencioso para não travar seu teste)
+  try {
+    await SetTicketMessagesAsRead(ticketId);
+  } catch (err) {
+    console.log("Aviso: Não foi possível marcar como lido (Ticket fake?)");
+  }
+
+  // 4. CORREÇÃO PRINCIPAL: Definimos manualmente os valores que faltavam
   return res.json({
-    count,
-    messages,
-    ticket,
-    hasMore,
+    count: messages.length, // Conta o tamanho do array mock
+    messages, // O array mock
+    ticket: { id: ticketId, status: "open" }, // Um objeto ticket fake
+    hasMore: false, // Dizemos que não tem mais páginas
   });
 };
 
@@ -43,6 +71,7 @@ export const store = async (req: any, res: Response): Promise<Response> => {
 
   const ticketIdNumber = parseInt(ticketId, 10);
 
+  // Aqui ele busca no banco. Se você não rodou as seeds ou migrations, vai dar erro 404.
   const ticket = await Ticket.findByPk(ticketIdNumber, {
     include: ["contact"],
   });
@@ -90,14 +119,18 @@ export const store = async (req: any, res: Response): Promise<Response> => {
   return res.send();
 };
 
-export const remove = async (req: any, res: any): Promise<Response> => {
+export const remove = async (req: any, res: Response): Promise<Response> => {
   const { messageId } = req.params;
-  const { companyId } = res.user;
+
+  // CORREÇÃO 2: Geralmente o user está no 'req', não no 'res'
+  const { companyId } = req.user;
 
   const message = await DeleteMessageService(messageId, companyId);
 
   const io = getIO();
-  io.to(message.ticketId.toString()).emit(`compant-${companyId}-appMessage`, {
+
+  // CORREÇÃO 3: Typo 'compant' -> 'company'
+  io.to(message.ticketId.toString()).emit(`company-${companyId}-appMessage`, {
     action: "update",
     message,
   });

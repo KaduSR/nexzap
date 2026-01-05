@@ -301,6 +301,21 @@ const Tickets: React.FC = () => {
       const data = await res.json();
 
       if (data.messages && Array.isArray(data.messages)) {
+        const formattedMessages = data.messages.map((backendMsg: any) => ({
+          id: backendMsg.id,
+          fromMe: backendMsg.fromMe,
+
+          text: backendMsg.body,
+
+          time: new Date(backendMsg.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+
+          mediaType: backendMsg.mediaType,
+          mediaUrl: backendMsg.mediaUrl,
+          isPrivate: backendMsg.isPrivate || false,
+        }));
         setCurrentMessages(data.messages.reverse());
       }
     } catch (err) {
