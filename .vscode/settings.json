@@ -1,4 +1,5 @@
 {
   "cSpell.words": ["baseada", "Boleto", "Invoce", "Invoiceid", "valida"],
-  "cspell-sync.syncCombinedTxt": false
+  "cspell-sync.syncCombinedTxt": false,
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
