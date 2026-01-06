@@ -18,7 +18,7 @@ export const index = async (req: any, res: Response): Promise<Response> => {
   // 1. MOCK DE MENSAGENS (Simulação)
   const messages = [
     {
-      id: "msg-1",
+      id: `msg-${new Date().getTime()}`,
       body: `Olá! Aqui são as mensagens do Ticket ${ticketId} vindas do Backend!`,
       fromMe: false,
       read: true,
@@ -65,9 +65,29 @@ export const index = async (req: any, res: Response): Promise<Response> => {
 
 export const store = async (req: any, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
-  const { body, quotedMsg } = req.body;
+  const { body, quotedMsg, fromMe } = req.body;
   const medias = req.files as Express.Multer.File[];
   const { companyId } = req.user;
+
+  const newMessage = {
+    id: `msg-${new Date().getTime()}`,
+    body: body,
+    fromMe: fromMe,
+    mediaType: "chat",
+    createdAt: new Date().toISOString(),
+    contactId: null,
+    ticketId: Number(ticketId),
+  };
+
+  const io = getIO();
+  io.to(ticketId.toString()).emit("appMessage", {
+    action: "create",
+    message: newMessage,
+  });
+
+  console.log(`📡 Socket emitido para sala ${ticketId}:`, newMessage);
+
+  return res.json(newMessage);
 
   const ticketIdNumber = parseInt(ticketId, 10);
 

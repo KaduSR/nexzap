@@ -37,7 +37,7 @@ import TransferTicketModal from "../components/TransferTicketModal"; // Import
 import { useSip } from "../context/SipContext";
 import { useSocket } from "../context/SocketContext";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
 
 // --- Types ---
 interface Ticket {
@@ -244,6 +244,29 @@ const Tickets: React.FC = () => {
       fetchIxcData();
     }
   }, [selectedTicket, showIxcPanel]);
+   
+  useEffect(() => {
+        if (!socket) return;
+
+        const companyId = 1;
+
+        const onTickets = (data: any) => {
+          if (data.action === "update" || data.action === "create") {
+            const payloadTicket = data.ticket;
+
+            setTickets((prevState) => {
+              const filtered = prevState.filter((t) => t.id !== payloadTicket.id.toString());
+
+              const updatedTicket: Ticket = {
+                id: payloadTicket.id.toString(),
+                name: payloadTicket.contact?.name || payloadTicket.name || "Cliente Sem Nome",
+                lastMsg: payloadTicket.lastMessage || "",
+                time: new Date(payloadTicket.updatedAt) || 
+              }
+            })
+          }
+        })
+      })
 
   const fetchIxcData = async () => {
     setLoadingIxc(true);
@@ -279,10 +302,35 @@ const Tickets: React.FC = () => {
     setSelectedTicket(ticket);
     setCurrentMessages([]);
 
-    if (socket) {
-      console.log("📡 Entrando na sala", ticket.id);
-      socket.emit("joinChatBox", ticket.id);
-    }
+    useEffect(() => {
+      if (!socket || !selectedTicket) return;
+
+      const handleNewSocketMessage = (data: any) => {
+        if (data.action === "create" && data.message) {
+          const backendMsg = data.message;
+
+          const newMessage: Message = {
+            id: backendMsg.id,
+            text: backendMsg.body,
+            fromMe: backendMsg.fromMe,
+            time: new Date(backendMsg.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            mediaType: backendMsg.mediaType,
+            isPrivate: backendMsg.isPrivate,
+          };
+          setCurrentMessages((prev) => [...prev, newMessage]);
+          // scrollToBottom();
+        }
+      };
+
+      socket.on("appMessage", handleNewSocketMessage);
+
+      return () => {
+        socket.off("appMessage", handleNewSocketMessage);
+      };
+    }, [socket, selectedTicket]);
 
     try {
       const res = await fetch(
@@ -316,7 +364,7 @@ const Tickets: React.FC = () => {
           mediaUrl: backendMsg.mediaUrl,
           isPrivate: backendMsg.isPrivate || false,
         }));
-        setCurrentMessages(data.messages.reverse());
+        setCurrentMessages(formattedMessages.reverse());
       }
     } catch (err) {
       console.error("❌ Erro ao buscar histórico:", err);
@@ -371,22 +419,30 @@ const Tickets: React.FC = () => {
   const handleSendMessage = async () => {
     if (!message.trim() || !selectedTicket) return;
 
-    // Mock sending message to UI instantly
-    const newMessage: Message = {
-      id: `temp_${Date.now()}`,
-      fromMe: true,
-      text: message,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      isPrivate: isPrivateMode,
-    };
-    setCurrentMessages([...currentMessages, newMessage]);
-    setMessage("");
-    setIsPrivateMode(false); // Reset mode after send
+    const msgText = message;
 
-    // In real app, call API here: POST /messages/:ticketId { body: message, isPrivate: isPrivateMode }
+    setMessage("");
+    setIsPrivateMode(false);
+
+    try {
+      await fetch(`${API_URL}/api/messages/${selectedTicket.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer token",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          body: msgText,
+          fromMe: true,
+          read: true,
+          isPrivate: isPrivateMode,
+        }),
+      });
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      alert("Falha ao enviar mensagem. Verifique o console");
+      setMessage(msgText);
+    }
   };
 
   const handleScheduleMessage = async (e: React.FormEvent) => {

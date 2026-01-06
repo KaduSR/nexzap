@@ -5,7 +5,7 @@ import { sequelize, testConnection } from "./database/index";
 import { runSeeds } from "./database/seeders/runSeeds";
 import { initIO } from "./libs/socket";
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 
 async function startServer() {
   try {
