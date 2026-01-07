@@ -244,29 +244,63 @@ const Tickets: React.FC = () => {
       fetchIxcData();
     }
   }, [selectedTicket, showIxcPanel]);
-   
+
   useEffect(() => {
-        if (!socket) return;
+    if (!socket) return;
+    const companyId = 1;
 
-        const companyId = 1;
+    const onTicketEvent = (data: any) => {
+      // Ação: Criar ou Atualizar
+      if (data.action === "update" || data.action === "create") {
+        const payloadTicket = data.ticket;
 
-        const onTickets = (data: any) => {
-          if (data.action === "update" || data.action === "create") {
-            const payloadTicket = data.ticket;
+        setTickets((prevState) => {
+          // 1. Remove o ticket antigo se ele já existir na lista
+          const filtered = prevState.filter(
+            (t) => t.id !== payloadTicket.id.toString()
+          );
 
-            setTickets((prevState) => {
-              const filtered = prevState.filter((t) => t.id !== payloadTicket.id.toString());
+          // 2. Cria o objeto novo COMPLETO (respeitando a interface Ticket)
+          const updatedTicket: Ticket = {
+            id: payloadTicket.id.toString(),
+            name:
+              payloadTicket.contact?.name || payloadTicket.name || "Sem Nome",
+            lastMsg: payloadTicket.lastMessage || "",
 
-              const updatedTicket: Ticket = {
-                id: payloadTicket.id.toString(),
-                name: payloadTicket.contact?.name || payloadTicket.name || "Cliente Sem Nome",
-                lastMsg: payloadTicket.lastMessage || "",
-                time: new Date(payloadTicket.updatedAt) || 
-              }
-            })
-          }
-        })
-      })
+            // Correção da Hora:
+            time: new Date(
+              payloadTicket.updatedAt || new Date()
+            ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+
+            unread: payloadTicket.unreadMessages || 0,
+            status: payloadTicket.status,
+            ixcCustomer: false, // Default pois o backend ainda não manda isso
+            address: "", // Default
+            profilePicUrl: payloadTicket.contact?.profilePicUrl,
+            number: payloadTicket.contact?.number,
+          };
+
+          // 3. O PULO DO GATO: Retorna [Novo, ...Antigos]
+          // Isso faz o ticket pular para o topo
+          return [updatedTicket, ...filtered];
+        });
+      }
+
+      // Ação: Deletar
+      if (data.action === "delete") {
+        const ticketId = data.ticketId.toString();
+        setTickets((prevState) => prevState.filter((t) => t.id !== ticketId));
+      }
+    };
+
+    // LIGA O RÁDIO 📻 (Conecta o ouvinte)
+    socket.on(`company-${companyId}-ticket`, onTicketEvent);
+
+    // DESLIGA O RÁDIO (Limpeza ao sair da tela)
+    return () => {
+      socket.off(`company-${companyId}-ticket`, onTicketEvent);
+    };
+  }, [socket]);
 
   const fetchIxcData = async () => {
     setLoadingIxc(true);
