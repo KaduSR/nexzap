@@ -250,6 +250,7 @@ const Tickets: React.FC = () => {
     const companyId = 1;
 
     const onTicketEvent = (data: any) => {
+      console.log("👂 OUVINDO SOCKET NO FRONT:", data);
       // Ação: Criar ou Atualizar
       if (data.action === "update" || data.action === "create") {
         const payloadTicket = data.ticket;

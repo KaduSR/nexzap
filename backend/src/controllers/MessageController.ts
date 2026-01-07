@@ -1,25 +1,19 @@
-// cspell:disable
+// cspell: disable
 import { Response } from "express";
-import { Ticket } from "../database/models/Ticket.model";
-import AppError from "../errors/AppError";
 import { getIO } from "../libs/socket";
-import CreateMessageService from "../services/MessageServices/CreateMessageService";
-import DeleteMessageService from "../services/MessageServices/DeleteMessageService";
-import ListMessagesService from "../services/MessageServices/ListMessagesService";
-import SetTicketMessagesAsRead from "../services/TicketServices/SetTicketMessagesAsRead";
 
-type IndexQuery = {
-  pageNumber: string;
-};
+// Serviços (Mantidos apenas os que são usados nas funções abaixo)
+import DeleteMessageService from "../services/MessageServices/DeleteMessageService";
+import SetTicketMessagesAsRead from "../services/TicketServices/SetTicketMessagesAsRead";
 
 export const index = async (req: any, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
 
-  // 1. MOCK DE MENSAGENS (Simulação)
+  // 1. MOCK DE MENSAGENS (Simulação para teste de Frontend)
   const messages = [
     {
       id: `msg-${new Date().getTime()}`,
-      body: `Olá! Aqui são as mensagens do Ticket ${ticketId} vindas do Backend!`,
+      body: `Olá! Aqui são as mensagens do Ticket ${ticketId} vindas do Backend (Mock)!`,
       fromMe: false,
       read: true,
       mediaType: "chat",
@@ -39,117 +33,89 @@ export const index = async (req: any, res: Response): Promise<Response> => {
     },
   ];
 
-  // Comentei para evitar erros se não houver dados no banco ainda
-  // const { pageNumber } = req.query as IndexQuery;
-  // const { companyId } = req.user;
-
-  // 2. Comentamos o serviço real para usar o Mock
-  // const { count, messages, ticket, hasMore } = await ListMessagesService({ ... });
-
-  // 3. Tenta marcar como lido (Pode dar erro se o ticket não existir no banco real,
-  // então vamos envolver num try/catch silencioso para não travar seu teste)
+  // Tenta marcar como lido (silencioso se falhar, pois é teste)
   try {
     await SetTicketMessagesAsRead(ticketId);
   } catch (err) {
     console.log("Aviso: Não foi possível marcar como lido (Ticket fake?)");
   }
 
-  // 4. CORREÇÃO PRINCIPAL: Definimos manualmente os valores que faltavam
   return res.json({
-    count: messages.length, // Conta o tamanho do array mock
-    messages, // O array mock
-    ticket: { id: ticketId, status: "open" }, // Um objeto ticket fake
-    hasMore: false, // Dizemos que não tem mais páginas
+    count: messages.length,
+    messages,
+    ticket: { id: ticketId, status: "open" },
+    hasMore: false,
   });
 };
 
 export const store = async (req: any, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
-  const { body, quotedMsg, fromMe } = req.body;
-  const medias = req.files as Express.Multer.File[];
-  const { companyId } = req.user;
+  const { body, fromMe } = req.body;
+  // Upload de arquivos está desativado neste Mock
+  // const medias = req.files as Express.Multer.File[];
 
+  // 1. Cria o objeto da mensagem (MOCK)
   const newMessage = {
     id: `msg-${new Date().getTime()}`,
     body: body,
-    fromMe: fromMe,
+    fromMe: fromMe || true, // Assume true (atendente) se não vier nada
+    read: true,
     mediaType: "chat",
     createdAt: new Date().toISOString(),
-    contactId: null,
     ticketId: Number(ticketId),
+    contactId: null,
   };
 
   const io = getIO();
+  const companyId = 1; // ID fixo para teste
+
+  // 2. SOCKET 1: Avisa o Chat Aberto (Balão aparece)
   io.to(ticketId.toString()).emit("appMessage", {
     action: "create",
     message: newMessage,
   });
 
-  console.log(`📡 Socket emitido para sala ${ticketId}:`, newMessage);
+  // 3. SOCKET 2: Avisa a Lista Lateral/Kanban (Atualiza posição e texto)
+  const ticketParaLista = {
+    id: Number(ticketId),
+    lastMessage: body,
+    updatedAt: new Date().toISOString(), // Hora atual para subir ao topo
+    unreadMessages: 0,
+    status: "open",
+    contact: { name: "João Silva (Teste)", profilePicUrl: "" },
+  };
 
-  return res.json(newMessage);
+  // Canal específico da empresa
+  // io.(`company-${companyId}-ticket`).emit(`company-${companyId}-ticket`, {
+  //   action: "update",
+  //   ticket: ticketParaLista,
+  // });
 
-  const ticketIdNumber = parseInt(ticketId, 10);
-
-  // Aqui ele busca no banco. Se você não rodou as seeds ou migrations, vai dar erro 404.
-  const ticket = await Ticket.findByPk(ticketIdNumber, {
-    include: ["contact"],
+  io.emit("appMessage", {
+    action: "create",
+    message: newMessage,
   });
 
-  if (!ticket) throw new AppError("ERR_NO_TICKET_FOUND", 404);
+  io.emit(`company-1-ticket`, {
+    action: "update",
+    ticket: ticketParaLista,
+  });
 
-  const quotedMsgId = typeof quotedMsg === "object" ? quotedMsg?.id : quotedMsg;
+  console.log(`📡 Sockets emitidos para Ticket ${ticketId} (Chat e Lista)`);
 
-  if (medias && medias.length > 0) {
-    await Promise.all(
-      medias.map(async (media: Express.Multer.File) => {
-        await CreateMessageService({
-          messageData: {
-            ticketId: ticketIdNumber,
-            body: media.originalname,
-            contactId: undefined,
-            fromMe: true,
-            read: true,
-            mediaType: media.mimetype.split("/")[0],
-            mediaUrl: media.filename,
-            quotedMsgId,
-            ack: 1,
-          },
-          companyId,
-          media,
-        });
-      })
-    );
-  } else {
-    await CreateMessageService({
-      messageData: {
-        ticketId: ticketIdNumber,
-        body,
-        contactId: undefined,
-        fromMe: true,
-        read: true,
-        mediaType: "chat",
-        quotedMsgId,
-        ack: 2,
-      },
-      companyId,
-    });
-  }
-
-  return res.send();
+  return res.json(newMessage);
 };
 
 export const remove = async (req: any, res: Response): Promise<Response> => {
   const { messageId } = req.params;
-
-  // CORREÇÃO 2: Geralmente o user está no 'req', não no 'res'
   const { companyId } = req.user;
 
+  // Nota: Isso vai tentar apagar do banco de dados REAL.
+  // Se você tentar apagar uma mensagem criada pelo Mock acima, vai dar erro 404
+  // porque ela não existe no banco SQL, apenas na memória do navegador.
   const message = await DeleteMessageService(messageId, companyId);
 
   const io = getIO();
-
-  // CORREÇÃO 3: Typo 'compant' -> 'company'
   io.to(message.ticketId.toString()).emit(`company-${companyId}-appMessage`, {
     action: "update",
     message,
