@@ -34,7 +34,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     // 1. Definição da URL (Forçando IPv4 para evitar problemas de DNS no Node 17+)
-    const socketUrl = "http://127.0.0.1:8081";
+    const socketUrl =
+      import.meta.env.VITE_SOCKET_URL || "http://localhost:8081";
 
     console.log("🔌 Inicializando Socket em:", socketUrl);
 

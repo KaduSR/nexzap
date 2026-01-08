@@ -76,7 +76,7 @@ routes.post("/flowbuilder", isAuth, FlowBuilderController.save);
 // Tickets
 routes.get("/tickets/kanban", isAuth, TicketController.indexKanban);
 routes.post("/tickets", isAuth, TicketController.store);
-routes.get("/tickets", isAuth, TicketController.index);
+routes.get("/tickets", TicketController.index);
 routes.put("/tickets/:ticketId", isAuth, TicketController.update);
 routes.get("/tickets/:ticketId/ai-analysis", isAuth, TicketAiController.show);
 

@@ -132,6 +132,7 @@ export const remove = async (req: any, res: Response): Promise<Response> => {
 };
 
 export const index = async (req: any, res: Response): Promise<Response> => {
+  console.log("🔥 [BACKEND] O Controller INDEX foi chamado! 🔥");
   const tickets = [
     {
       id: "1",
