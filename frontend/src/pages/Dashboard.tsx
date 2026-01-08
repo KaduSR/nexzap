@@ -41,6 +41,15 @@ const Dashboard: React.FC = () => {
   const [financialData, setFinancialData] = useState<any>(null);
   const [loadingFinancial, setLoadingFinancial] = useState(true);
   const [error, setError] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     fetchFinancialData();
@@ -195,7 +204,7 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Financial Chart */}
-        <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-4xl border border-slate-800 shadow-xl relative overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-4xl border border-slate-800 shadow-xl relative overflow-hidden">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-lg md:text-xl font-bold mb-1 text-white">
@@ -208,65 +217,83 @@ const Dashboard: React.FC = () => {
             <MoreHorizontal className="text-slate-600 cursor-pointer" />
           </div>
 
-          <div className="h-62.5 md:h-87.5 w-full flex-1 min-h-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={chartData}
-                margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#1e293b"
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: "#94a3b8", fontWeight: 600 }}
-                  dy={10}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: "#94a3b8" }}
-                  tickFormatter={(value) => `R$${value / 1000}k`}
-                />
-                <Tooltip
-                  cursor={{ fill: "#1e293b", opacity: 0.4 }}
-                  contentStyle={{
-                    backgroundColor: "#0f172a",
-                    borderRadius: "16px",
-                    border: "1px solid #1e293b",
-                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)",
-                    color: "#f8fafc",
-                    fontWeight: "bold",
-                    fontSize: "12px",
-                  }}
-                  itemStyle={{ color: "#10b981" }}
-                  formatter={(value: number) => formatCurrency(value)}
-                />
-                <Bar
-                  dataKey="value"
-                  name="Receita"
-                  fill="url(#colorRevenue)"
-                  radius={[8, 8, 0, 0]}
-                  barSize={40}
-                  isAnimationActive={true}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-64 md:h-96 w-full flex-1 min-h-0">
+            {isMounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="colorRevenue"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                      <stop
+                        offset="95%"
+                        stopColor="#10b981"
+                        stopOpacity={0.2}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#1e293b"
+                  />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#1e293b"
+                  />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: "#94a3b8", fontWeight: 600 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: "#94a3b8" }}
+                    tickFormatter={(value) => `R$${value / 1000}k`}
+                  />
+                  <Tooltip
+                    cursor={{ fill: "#1e293b", opacity: 0.4 }}
+                    contentStyle={{
+                      backgroundColor: "#0f172a",
+                      borderRadius: "16px",
+                      border: "1px solid #1e293b",
+                      color: "#f8fafc",
+                    }}
+                    itemStyle={{ color: "#10b981" }}
+                    formatter={(value: number) => formatCurrency(value)}
+                  />
+                  <Bar
+                    dataKey="value"
+                    name="Receita"
+                    fill="url(#colorRevenue)"
+                    radius={[8, 8, 0, 0]}
+                    barSize={40}
+                    isAnimationActive={true}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-slate-500">
+                Carregando gráfico...
+              </div>
+            )}
           </div>
         </div>
 
         {/* Operational Stats (Existing) */}
-        <div className="bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-4xl border border-slate-800 shadow-xl flex flex-col">
+        <div className="bg-slate-900/50 backdrop-blur-xl p-5 md:p-8 rounded-4xl border border-slate-800 shadow-xl">
           <h2 className="text-lg md:text-xl font-bold mb-2 text-white">
             Operacional
           </h2>
@@ -274,36 +301,43 @@ const Dashboard: React.FC = () => {
             Tickets por Departamento
           </p>
 
-          <div className="h-55 md:h-62.5 w-full relative shrink-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#0f172a",
-                    borderRadius: "12px",
-                    border: "1px solid #1e293b",
-                    color: "#fff",
-                    fontSize: "12px",
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+          <div className="h-64 md:h-72 w-full relative shrink-0">
+            {/* Ajuste a altura para h-64 md:h-72 */}
+            {isMounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#0f172a",
+                      borderRadius: "12px",
+                      border: "1px solid #1e293b",
+                      color: "#fff",
+                      fontSize: "12px",
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-slate-500">
+                Carregando...
+              </div>
+            )}
 
-            {/* Legend Center */}
+            {/* Mantenha a legenda centralizada (o div com absolute) aqui fora do ternário ou dentro, tanto faz, mas cuidado para não apagar */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
               <span className="block text-2xl md:text-3xl font-black text-white">
                 1k
