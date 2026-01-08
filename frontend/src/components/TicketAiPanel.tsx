@@ -1,3 +1,4 @@
+// cspell: disable
 import {
   Brain,
   Check,
@@ -84,7 +85,7 @@ const TicketAiPanel: React.FC<TicketAiPanelProps> = ({ ticketId, onClose }) => {
   return (
     <div className="h-full flex flex-col bg-slate-50 dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800 w-full animate-in slide-in-from-right duration-300">
       {/* Header */}
-      <div className="p-6 bg-gradient-to-br from-indigo-600 to-violet-700 text-white shrink-0">
+      <div className="p-6 bg-linear-to-br from-indigo-600 to-violet-700 text-white shrink-0">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-2">
             <Sparkles className="text-yellow-300" fill="currentColor" />

@@ -11,6 +11,7 @@ import {
   Search,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import TicketModal from "../components/TicketModal";
 import api from "../services/api";
 import { Ticket } from "../types/index";
 
@@ -28,6 +29,8 @@ const Kanban: React.FC = () => {
   const [filterToday, setFilterToday] = useState(true);
   const [cards, setCards] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(false);
+  const [ticketModalOpen, setTicketModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<Ticket | null>(null);
 
   useEffect(() => {
     fetchKanbanTickets();
@@ -86,7 +89,10 @@ const Kanban: React.FC = () => {
               {filterToday ? "Vendo Hoje" : "Ver Todos"}
             </span>
           </button>
-          <button className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg cursor-pointer">
+          <button
+            onClick={() => setTicketModalOpen(true)}
+            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg cursor-pointer"
+          >
             <Plus size={20} />
             Novo Card
           </button>
@@ -170,11 +176,17 @@ const Kanban: React.FC = () => {
                         <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/50 mt-auto">
                           <div className="flex items-center gap-2 min-w-0">
                             <div className="w-6 h-6 rounded-full border border-slate-200 dark:border-slate-600 overflow-hidden shrink-0">
-                              <img
-                                src={card.contact?.profilePicUrl}
-                                className="w-full h-full object-cover"
-                                alt=""
-                              />
+                              {card.contact?.profilePicUrl ? (
+                                <img
+                                  src={card.contact?.profilePicUrl}
+                                  className="w-full h-full object-cover"
+                                  alt={card.contact?.name}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-indigo-100 text-indigo-600 text-xs font-bold">
+                                  {card.contact?.name?.charAt(0) || "?"}
+                                </div>
+                              )}
                             </div>
                             <span className="text-[10px] font-bold text-slate-400 truncate">
                               #{card.id}
@@ -191,7 +203,12 @@ const Kanban: React.FC = () => {
                               className="flex items-center gap-1 text-[10px] font-medium text-amber-500"
                               title="Horário"
                             >
-                              <Clock size={12} /> {card.UpdatedAt}
+                              <Clock size={12} />{" "}
+                              {card.UpdatedAt
+                                ? format(new Date(card.UpdatedAt), "HH:mm", {
+                                    locale: ptBR,
+                                  })
+                                : "--:--"}
                             </div>
                           </div>
                         </div>
@@ -207,6 +224,11 @@ const Kanban: React.FC = () => {
           </div>
         )}
       </div>
+      <TicketModal
+        isOpen={ticketModalOpen}
+        onClose={() => setTicketModalOpen(false)}
+        onSuccess={fetchKanbanTickets}
+      />
     </div>
   );
 };
