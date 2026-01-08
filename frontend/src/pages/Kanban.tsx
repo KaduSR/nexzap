@@ -11,6 +11,8 @@ import {
   Search,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import api from "../services/api";
+import { Ticket } from "../types/index";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,21 +24,9 @@ const columns = [
   { id: "closed", title: "Finalizados", color: "bg-emerald-500" },
 ];
 
-interface TicketCard {
-  id: number;
-  title: string;
-  client: string;
-  tags: string[];
-  col: string;
-  time: string;
-  date: string;
-  avatar: string;
-  address: string | null;
-}
-
 const Kanban: React.FC = () => {
   const [filterToday, setFilterToday] = useState(true);
-  const [cards, setCards] = useState<TicketCard[]>([]);
+  const [cards, setCards] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -45,36 +35,14 @@ const Kanban: React.FC = () => {
 
   const fetchKanbanTickets = async () => {
     setLoading(true);
-    // Mock Data para visualização
-    setTimeout(() => {
-      setCards([
-        {
-          id: 1,
-          title: "Sem internet desde ontem",
-          client: "João Silva",
-          tags: ["Suporte", "Urgente"],
-          col: "open",
-          time: "09:30",
-          date: format(new Date(), "yyyy-MM-dd"),
-          avatar:
-            "https://ui-avatars.com/api/?name=Joao+Silva&background=random",
-          address: "Rua A, 123",
-        },
-        {
-          id: 2,
-          title: "Boleto não chegou",
-          client: "Maria Oliveira",
-          tags: ["Financeiro"],
-          col: "pending",
-          time: "10:15",
-          date: format(new Date(), "yyyy-MM-dd"),
-          avatar:
-            "https://ui-avatars.com/api/?name=Maria+Oliveira&background=random",
-          address: null,
-        },
-      ]);
+    try {
+      const { data } = await api.get<Ticket[]>("/tickets");
+      setCards(data);
+    } catch {
+      // Silent fail for preview, console log only
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   const filteredCards = cards; // Aqui viria a lógica real de filtro
@@ -149,7 +117,7 @@ const Kanban: React.FC = () => {
                       {col.title}
                     </h3>
                     <span className="bg-white dark:bg-slate-800 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      {filteredCards.filter((c) => c.col === col.id).length}
+                      {filteredCards.filter((c) => c.status === col.id).length}
                     </span>
                   </div>
                   <button className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
@@ -159,7 +127,7 @@ const Kanban: React.FC = () => {
 
                 <div className="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-3">
                   {filteredCards
-                    .filter((c) => c.col === col.id)
+                    .filter((c) => c.status === col.id)
                     .map((card) => (
                       <div
                         key={card.id}
@@ -167,14 +135,11 @@ const Kanban: React.FC = () => {
                       >
                         <div className="flex justify-between items-start">
                           <div className="flex flex-wrap gap-2">
-                            {card.tags.map((tag, idx) => (
-                              <span
-                                key={idx}
-                                className="text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                              >
-                                {tag}
+                            {card.queue && (
+                              <span className="text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                                {card.queue.name}
                               </span>
-                            ))}
+                            )}
                           </div>
                           <button className="text-slate-300 hover:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
                             <MoreHorizontal size={16} />
@@ -183,10 +148,10 @@ const Kanban: React.FC = () => {
 
                         <div className="min-w-0">
                           <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug wrap-break-word">
-                            {card.title}
+                            {card.contact?.name || "Sem nome"}
                           </h4>
                           <p className="text-xs text-slate-500 wrap-break-word mt-0.5">
-                            {card.client}
+                            {card.contact?.name || "Sem nome"}
                           </p>
                         </div>
 
@@ -206,7 +171,7 @@ const Kanban: React.FC = () => {
                           <div className="flex items-center gap-2 min-w-0">
                             <div className="w-6 h-6 rounded-full border border-slate-200 dark:border-slate-600 overflow-hidden shrink-0">
                               <img
-                                src={card.avatar}
+                                src={card.contact?.profilePicUrl}
                                 className="w-full h-full object-cover"
                                 alt=""
                               />
@@ -226,7 +191,7 @@ const Kanban: React.FC = () => {
                               className="flex items-center gap-1 text-[10px] font-medium text-amber-500"
                               title="Horário"
                             >
-                              <Clock size={12} /> {card.time}
+                              <Clock size={12} /> {card.UpdatedAt}
                             </div>
                           </div>
                         </div>

@@ -42,6 +42,7 @@ export interface Ticket {
   companyId: number;
   whatsappId?: number;
   uuid?: string;
+  address: string;
 }
 
 export interface Message {
