@@ -139,6 +139,9 @@ const Login: React.FC = () => {
                   size={20}
                 />
                 <input
+                  id="email"
+                  name="email"
+                  autoComplete="email"
                   type="email"
                   required
                   className="w-full bg-slate-900 border border-slate-800 focus:border-blue-500 rounded-xl py-3.5 pl-12 pr-4 text-slate-200 outline-none transition-all shadow-sm font-medium"
@@ -167,6 +170,9 @@ const Login: React.FC = () => {
                   size={20}
                 />
                 <input
+                  id="password"
+                  name="password"
+                  autoComplete="current-password"
                   type={showPassword ? "text" : "password"}
                   required
                   className="w-full bg-slate-900 border border-slate-800 focus:border-blue-500 rounded-xl py-3.5 pl-12 pr-12 text-slate-200 outline-none transition-all shadow-sm font-medium"

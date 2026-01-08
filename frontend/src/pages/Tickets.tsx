@@ -197,8 +197,35 @@ const Tickets: React.FC = () => {
           throw new Error(`Erro na API: ${res.status}`);
         }
         const data = await res.json();
-        console.log("Tickets carregando:", data);
-        setTickets(data);
+        console.log("📦 Tickets BRUTOS do Backend:", data);
+
+        const listDoBackend = data.tickets || [];
+
+        const ticketsFormatados = listDoBackend.map((backendTicket: any) => ({
+          id: backendTicket.id.toString(),
+          name: backendTicket.contact?.name || backendTicket.name || "Sem Nome",
+
+          // CORREÇÃO 1: De 'lastMsg' para 'lastMsg'
+          lastMsg: backendTicket.lastMsg || "",
+
+          time: backendTicket.updatedAt
+            ? new Date(backendTicket.updatedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "",
+
+          // CORREÇÃO 2: De 'undread' para 'unread'
+          unread: backendTicket.unreadMessages || 0,
+
+          status: backendTicket.status,
+          ixcCustomer: false,
+          address: "",
+          profilePicUrl: backendTicket.contact?.profilePicUrl,
+          number: backendTicket.contact?.number,
+        }));
+
+        setTickets(data.tickets || []);
       } catch (error) {
         console.error("Erro ao buscar tickets:", error);
       }
@@ -266,7 +293,7 @@ const Tickets: React.FC = () => {
             id: payloadTicket.id.toString(),
             name:
               payloadTicket.contact?.name || payloadTicket.name || "Sem Nome",
-            lastMsg: payloadTicket.lastMessage || "",
+            lastMsg: payloadTicket.lastMsg || "",
 
             // Correção da Hora:
             time: new Date(
@@ -585,6 +612,8 @@ const Tickets: React.FC = () => {
               size={18}
             />
             <input
+              id="search"
+              name="search"
               type="text"
               placeholder="Buscar conversas, protocolos..."
               className="w-full pl-12 pr-4 py-3 bg-slate-100 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl text-sm font-medium outline-none transition-all"
