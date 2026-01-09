@@ -39,10 +39,23 @@ const Kanban: React.FC = () => {
   const fetchKanbanTickets = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get<Ticket[]>("/tickets");
-      setCards(data);
-    } catch {
-      // Silent fail for preview, console log only
+      const { data } = await api.get("/tickets");
+
+      console.log("Dados recebidos:", data);
+
+      if (Array.isArray(data)) {
+        const normalizedCards = data.map((ticket) => ({
+          ...ticket,
+          status: ticket.status ? ticket.status.toLowerCase() : "open",
+        }));
+        setCards(data);
+      } else {
+        const cardsArray = (data as any).tickets || (data as any).rows || [];
+        setCards(cardsArray);
+      }
+    } catch (err) {
+      console.error("Erro ao buscar tickets:", err);
+      setCards([]);
     } finally {
       setLoading(false);
     }

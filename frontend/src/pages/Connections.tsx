@@ -21,6 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import api from  "../services/api";
 
 // --- Interfaces & Types ---
 interface Connection {
@@ -40,6 +41,8 @@ interface Connection {
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
+import { UpdatedAt } from 'sequelize-typescript/dist';
+import { UpdatedAt } from 'sequelize-typescript/dist';
 
 const Connections: React.FC = () => {
   const [connections, setConnections] = useState<Connection[]>([]);
@@ -63,26 +66,17 @@ const Connections: React.FC = () => {
   const fetchConnections = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/whatsapp`, {
-        headers: { Authorization: "Bearer token" },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        // Adapter pattern para normalizar dados do backend com a UI
-        const adaptedData = data.map((c: any) => ({
-          ...c,
-          type: "BAILEYS",
-          icon: <MessageCircle size={24} className="text-emerald-600" />,
-          color: "emerald",
-          number: `+${c.id}`, // Mock formatting
-          updatedAt: "Agora",
-        }));
-        setConnections(adaptedData);
-      }
-    } catch (err) {
-      console.error("Error fetching connections:", err);
-    } finally {
-      setLoading(false);
+      const { data } = await api.get("/whatsapp");
+
+      const adaptedData = data.map((c: any) => {
+        ...c,
+        type: "BAYLES",
+        icon: <MessageCircle size={24} className="text-emerald-600" />
+        color: "emerald",
+        status: c.status,
+        number: c.number || "Sem número",
+        UpdatedAt: format(new Date(c.UpdatedAt), "HH:mm", {locale: ptBR}),
+      }));
     }
   };
 
